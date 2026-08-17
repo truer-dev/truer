@@ -1,0 +1,13 @@
+[package]
+name = "truer_span"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Source positions and line indexing for truer."
+
+[dependencies]
+
+[lints]
+workspace = true
