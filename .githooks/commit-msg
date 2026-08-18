@@ -1,0 +1,59 @@
+#!/bin/sh
+
+root=$(git rev-parse --show-toplevel)
+
+fail() {
+  echo "commit-msg: $*" >&2
+  exit 1
+}
+
+warn() {
+  echo "commit-msg: $*" >&2
+}
+
+staged() {
+  git diff --cached --name-only | grep '\.rs$'
+}
+
+subject=$(head -n 1 "$1")
+
+case "$subject" in
+'#'* | '') exit 0 ;;
+esac
+
+"$root/.githooks/subject-valid.sh" "$subject" || exit 1
+
+sed '1d' "$1" | grep -Eqv '^(#|[[:space:]]*$)' &&
+  fail "single-line subject only, drop the body"
+
+scope=${subject#*\(}
+scope=${scope%%\)*}
+paths=$(git diff --cached --name-only)
+
+if [ "$scope" = workspace ]; then
+  strays=$(echo "$paths" | grep '^crates/')
+else
+  strays=$(echo "$paths" | grep -v "^crates/$scope/" | grep -v '^Cargo\.lock$')
+fi
+
+[ -z "$strays" ] ||
+  fail "scope $scope does not cover $(echo "$strays" | tr '\n' ' ')"
+
+tests=$(staged | grep -c '_tests\.rs$')
+sources=$(staged | grep -vc '_tests\.rs$')
+
+case "${subject%%(*}" in
+test)
+  [ "$sources" -eq 0 ] || warn "a red commit also changed $sources source file(s)"
+  [ "$tests" -gt 0 ] || warn "no test changed"
+  ;;
+feat | fix | perf)
+  [ "$sources" -gt 0 ] || warn "no source file changed, so nothing was implemented"
+  [ "$tests" -eq 0 ] || warn "a test belongs in its own test: commit"
+  ;;
+refactor)
+  [ "$tests" -eq 0 ] || warn "green tests are the contract a refactor preserves"
+  ;;
+esac
+
+exit 0
