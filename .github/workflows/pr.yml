@@ -1,0 +1,20 @@
+name: pr
+
+on:
+  pull_request:
+    types: [opened, reopened, edited, assigned, unassigned, ready_for_review]
+
+jobs:
+  metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Title follows the commit convention
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: .githooks/subject-valid.sh "$TITLE"
+      - name: Someone owns this pull request
+        if: ${{ github.event.pull_request.assignees[0] == null }}
+        run: |
+          echo "::error::assign someone to this pull request"
+          exit 1

@@ -42,16 +42,14 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - name: Pull request title
+      - name: Kind from the title
         env:
           TITLE: ${{ github.event.pull_request.title }}
-        run: |
-          .githooks/subject-valid.sh "$TITLE"
-          echo "type=${TITLE%%[(:]*}" >>"$GITHUB_ENV"
+        run: echo "kind=${TITLE%%[(:]*}" >>"$GITHUB_ENV"
       - name: Commit series
         run: |
           echo '```' >>"$GITHUB_STEP_SUMMARY"
           git log --reverse --format='%s' "$BASE..HEAD" >>"$GITHUB_STEP_SUMMARY"
           echo '```' >>"$GITHUB_STEP_SUMMARY"
       - name: Review load
-        run: .github/review-load.sh "$BASE" "$type" | tee -a "$GITHUB_STEP_SUMMARY"
+        run: .github/review-load.sh "$BASE" "$kind" | tee -a "$GITHUB_STEP_SUMMARY"
