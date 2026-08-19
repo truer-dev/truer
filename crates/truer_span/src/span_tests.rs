@@ -20,3 +20,8 @@ fn span_that_starts_where_it_ends_is_empty() {
 fn span_covering_text_is_not_empty() {
     assert!(!Span::new(3, 7).is_empty());
 }
+
+#[test]
+fn empty_span_is_built_at_one_offset() {
+    assert_eq!(Span::empty(5), Span::new(5, 5));
+}
