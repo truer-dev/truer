@@ -5,9 +5,6 @@ pub struct Span {
 }
 
 impl Span {
-    /// # Panics
-    ///
-    /// Panics in debug builds if `start > end`.
     pub const fn new(start: u32, end: u32) -> Self {
         debug_assert!(start <= end);
         Self { start, end }
