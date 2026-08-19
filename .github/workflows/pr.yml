@@ -13,6 +13,10 @@ jobs:
         env:
           TITLE: ${{ github.event.pull_request.title }}
         run: .githooks/subject-valid.sh "$TITLE"
+      - name: Description follows the template
+        env:
+          BODY: ${{ github.event.pull_request.body }}
+        run: printf '%s' "$BODY" | .github/pr-body.sh
       - name: Someone owns this pull request
         if: ${{ github.event.pull_request.assignees[0] == null }}
         run: |
