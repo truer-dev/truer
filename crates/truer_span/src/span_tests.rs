@@ -25,3 +25,9 @@ fn span_covering_text_is_not_empty() {
 fn empty_span_is_built_at_one_offset() {
     assert_eq!(Span::empty(5), Span::new(5, 5));
 }
+
+#[test]
+fn span_at_the_start_of_a_text_is_valid() {
+    let span = Span::new(0, 0);
+    assert_eq!((span.start(), span.end()), (0, 0));
+}
