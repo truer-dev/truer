@@ -45,3 +45,9 @@ fn spans_that_start_together_sort_by_where_they_end() {
     spans.sort();
     assert_eq!(spans, [Span::new(1, 3), Span::new(1, 9)]);
 }
+
+#[test]
+#[should_panic]
+fn span_cannot_end_before_it_starts() {
+    Span::new(7, 3);
+}
