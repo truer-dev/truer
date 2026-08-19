@@ -31,3 +31,10 @@ fn span_at_the_start_of_a_text_is_valid() {
     let span = Span::new(0, 0);
     assert_eq!((span.start(), span.end()), (0, 0));
 }
+
+#[test]
+fn spans_sort_by_where_they_start() {
+    let mut spans = [Span::new(5, 9), Span::new(1, 3), Span::new(3, 4)];
+    spans.sort();
+    assert_eq!(spans, [Span::new(1, 3), Span::new(3, 4), Span::new(5, 9)]);
+}
