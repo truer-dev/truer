@@ -48,7 +48,7 @@ fn spans_that_start_together_sort_by_where_they_end() {
 
 #[cfg(debug_assertions)]
 #[test]
-#[should_panic]
+#[should_panic(expected = "start <= end")]
 fn span_cannot_end_before_it_starts() {
     Span::new(7, 3);
 }
