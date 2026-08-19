@@ -13,6 +13,10 @@ impl Span {
         self.start
     }
 
+    pub const fn empty(at: u32) -> Self {
+        Self { start: at, end: at }
+    }
+
     pub const fn end(&self) -> u32 {
         self.end
     }
