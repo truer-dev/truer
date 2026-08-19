@@ -5,15 +5,15 @@ pub struct Span {
 }
 
 impl Span {
-    pub fn new(start: u32, end: u32) -> Self {
+    pub const fn new(start: u32, end: u32) -> Self {
         Self { start, end }
     }
 
-    pub fn start(&self) -> u32 {
+    pub const fn start(&self) -> u32 {
         self.start
     }
 
-    pub fn end(&self) -> u32 {
+    pub const fn end(&self) -> u32 {
         self.end
     }
 }
