@@ -5,3 +5,8 @@ fn new_reports_the_offsets_it_was_built_from() {
     let span = Span::new(3, 7);
     assert_eq!((span.start(), span.end()), (3, 7));
 }
+
+#[test]
+fn spans_over_the_same_offsets_are_equal() {
+    assert_eq!(Span::new(3, 7), Span::new(3, 7));
+}
