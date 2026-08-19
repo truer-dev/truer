@@ -15,3 +15,8 @@ fn spans_over_the_same_offsets_are_equal() {
 fn span_that_starts_where_it_ends_is_empty() {
     assert!(Span::new(5, 5).is_empty());
 }
+
+#[test]
+fn span_covering_text_is_not_empty() {
+    assert!(!Span::new(3, 7).is_empty());
+}
