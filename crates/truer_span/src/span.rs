@@ -16,6 +16,10 @@ impl Span {
     pub const fn end(&self) -> u32 {
         self.end
     }
+
+    pub const fn is_empty(&self) -> bool {
+        self.start == self.end
+    }
 }
 
 #[cfg(test)]
