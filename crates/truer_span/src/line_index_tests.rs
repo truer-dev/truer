@@ -95,3 +95,9 @@ fn tab_occupies_one_column() {
     let index = LineIndex::new("\tx");
     assert_eq!(index.line_col(1), Some(LineCol { line: 0, col: 1 }));
 }
+
+#[test]
+fn lines_beyond_the_first_two_are_found() {
+    let index = LineIndex::new("a\nb\nc\nd");
+    assert_eq!(index.line_col(6), Some(LineCol { line: 3, col: 0 }));
+}
