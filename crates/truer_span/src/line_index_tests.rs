@@ -41,3 +41,9 @@ fn lone_carriage_return_is_a_break() {
     let index = LineIndex::new("a\rb");
     assert_eq!(index.line_col(2), Some(LineCol { line: 1, col: 0 }));
 }
+
+#[test]
+fn carriage_return_before_a_pair_is_its_own_break() {
+    let index = LineIndex::new("a\r\r\nb");
+    assert_eq!(index.line_col(4), Some(LineCol { line: 2, col: 0 }));
+}
