@@ -7,39 +7,21 @@ pub struct LineCol {
 #[derive(Debug)]
 pub struct LineIndex {
     line_starts: Vec<u32>,
-    is_char_boundary: Vec<bool>,
+    non_ascii_chars: Vec<(u32, u32)>,
+    len: u32,
 }
 
 impl LineIndex {
     pub fn new(text: &str) -> Self {
-        let bytes = text.as_bytes();
-        let mut line_starts = vec![0];
-        line_starts.extend(
-            bytes
-                .iter()
-                .enumerate()
-                .filter(|&(i, &byte)| {
-                    byte == b'\n' || (byte == b'\r' && bytes.get(i + 1) != Some(&b'\n'))
-                })
-                .map(|(i, _)| i as u32 + 1),
-        );
-        let mut is_char_boundary = vec![false; bytes.len() + 1];
-        for i in text.char_indices().map(|(i, _)| i).chain([bytes.len()]) {
-            is_char_boundary[i] = true;
-        }
         Self {
-            line_starts,
-            is_char_boundary,
+            line_starts: line_starts_of(text),
+            non_ascii_chars: non_ascii_chars_of(text),
+            len: text.len() as u32,
         }
     }
 
     pub fn line_col(&self, offset: u32) -> Option<LineCol> {
-        if !self
-            .is_char_boundary
-            .get(offset as usize)
-            .copied()
-            .unwrap_or(false)
-        {
+        if offset > self.len || self.splits_a_character(offset) {
             return None;
         }
         let line = self.line_starts.partition_point(|&start| start <= offset) - 1;
@@ -48,6 +30,43 @@ impl LineIndex {
             col: offset - self.line_starts[line],
         })
     }
+
+    fn splits_a_character(&self, offset: u32) -> bool {
+        match self
+            .non_ascii_chars
+            .binary_search_by_key(&offset, |&(start, _)| start)
+        {
+            Ok(_) | Err(0) => false,
+            Err(i) => {
+                let (start, len) = self.non_ascii_chars[i - 1];
+                offset < start + len
+            }
+        }
+    }
+}
+
+fn line_starts_of(text: &str) -> Vec<u32> {
+    let bytes = text.as_bytes();
+    let mut line_starts = vec![0];
+    line_starts.extend(
+        bytes
+            .iter()
+            .enumerate()
+            .filter(|&(i, &byte)| ends_a_line(bytes, i, byte))
+            .map(|(i, _)| i as u32 + 1),
+    );
+    line_starts
+}
+
+fn ends_a_line(bytes: &[u8], i: usize, byte: u8) -> bool {
+    byte == b'\n' || (byte == b'\r' && bytes.get(i + 1) != Some(&b'\n'))
+}
+
+fn non_ascii_chars_of(text: &str) -> Vec<(u32, u32)> {
+    text.char_indices()
+        .filter(|&(_, ch)| !ch.is_ascii())
+        .map(|(i, ch)| (i as u32, ch.len_utf8() as u32))
+        .collect()
 }
 
 #[cfg(test)]
