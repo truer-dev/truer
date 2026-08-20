@@ -53,3 +53,9 @@ fn offset_at_the_end_of_a_text_is_addressable() {
     let index = LineIndex::new("abc");
     assert_eq!(index.line_col(3), Some(LineCol { line: 0, col: 3 }));
 }
+
+#[test]
+fn text_ending_in_a_newline_has_a_final_empty_line() {
+    let index = LineIndex::new("a\n");
+    assert_eq!(index.line_col(2), Some(LineCol { line: 1, col: 0 }));
+}
