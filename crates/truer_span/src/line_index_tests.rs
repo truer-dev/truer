@@ -89,3 +89,9 @@ fn paragraph_separator_does_not_break_a_line() {
     let index = LineIndex::new("a\u{2029}b");
     assert_eq!(index.line_col(4), Some(LineCol { line: 0, col: 4 }));
 }
+
+#[test]
+fn tab_occupies_one_column() {
+    let index = LineIndex::new("\tx");
+    assert_eq!(index.line_col(1), Some(LineCol { line: 0, col: 1 }));
+}
