@@ -6,8 +6,8 @@ pub struct LineCol {
 
 #[derive(Debug)]
 pub struct LineIndex {
-    line_starts: Vec<u32>,
-    non_ascii_chars: Vec<(u32, u32)>,
+    line_starts: Box<[u32]>,
+    non_ascii_chars: Box<[(u32, u32)]>,
     len: u32,
 }
 
@@ -45,7 +45,7 @@ impl LineIndex {
     }
 }
 
-fn line_starts_of(text: &str) -> Vec<u32> {
+fn line_starts_of(text: &str) -> Box<[u32]> {
     let bytes = text.as_bytes();
     let mut line_starts = vec![0];
     line_starts.extend(
@@ -55,14 +55,14 @@ fn line_starts_of(text: &str) -> Vec<u32> {
             .filter(|&(i, &byte)| ends_a_line(bytes, i, byte))
             .map(|(i, _)| i as u32 + 1),
     );
-    line_starts
+    line_starts.into_boxed_slice()
 }
 
 fn ends_a_line(bytes: &[u8], i: usize, byte: u8) -> bool {
     byte == b'\n' || (byte == b'\r' && bytes.get(i + 1) != Some(&b'\n'))
 }
 
-fn non_ascii_chars_of(text: &str) -> Vec<(u32, u32)> {
+fn non_ascii_chars_of(text: &str) -> Box<[(u32, u32)]> {
     text.char_indices()
         .filter(|&(_, ch)| !ch.is_ascii())
         .map(|(i, ch)| (i as u32, ch.len_utf8() as u32))
