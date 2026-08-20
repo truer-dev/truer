@@ -65,3 +65,9 @@ fn offset_past_the_end_has_no_position() {
     let index = LineIndex::new("abc");
     assert_eq!(index.line_col(4), None);
 }
+
+#[test]
+fn offset_inside_a_character_has_no_position() {
+    let index = LineIndex::new("café");
+    assert_eq!(index.line_col(4), None);
+}
