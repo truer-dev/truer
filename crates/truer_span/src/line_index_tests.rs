@@ -83,3 +83,9 @@ fn line_separator_does_not_break_a_line() {
     let index = LineIndex::new("a\u{2028}b");
     assert_eq!(index.line_col(4), Some(LineCol { line: 0, col: 4 }));
 }
+
+#[test]
+fn paragraph_separator_does_not_break_a_line() {
+    let index = LineIndex::new("a\u{2029}b");
+    assert_eq!(index.line_col(4), Some(LineCol { line: 0, col: 4 }));
+}
