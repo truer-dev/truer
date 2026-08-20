@@ -71,3 +71,9 @@ fn offset_inside_a_character_has_no_position() {
     let index = LineIndex::new("café");
     assert_eq!(index.line_col(4), None);
 }
+
+#[test]
+fn offset_inside_a_character_on_a_later_line_has_no_position() {
+    let index = LineIndex::new("a\né");
+    assert_eq!(index.line_col(3), None);
+}
