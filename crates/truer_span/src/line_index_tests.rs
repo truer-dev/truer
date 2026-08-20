@@ -101,3 +101,12 @@ fn lines_beyond_the_first_two_are_found() {
     let index = LineIndex::new("a\nb\nc\nd");
     assert_eq!(index.line_col(6), Some(LineCol { line: 3, col: 0 }));
 }
+
+#[test]
+fn large_text_is_indexed_and_queried_without_quadratic_cost() {
+    let text = "x\n".repeat(1_000_000);
+    let index = LineIndex::new(&text);
+    for line in (0..1_000_000u32).step_by(100) {
+        assert_eq!(index.line_col(line * 2), Some(LineCol { line, col: 0 }));
+    }
+}
