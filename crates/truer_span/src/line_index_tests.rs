@@ -59,3 +59,9 @@ fn text_ending_in_a_newline_has_a_final_empty_line() {
     let index = LineIndex::new("a\n");
     assert_eq!(index.line_col(2), Some(LineCol { line: 1, col: 0 }));
 }
+
+#[test]
+fn offset_past_the_end_has_no_position() {
+    let index = LineIndex::new("abc");
+    assert_eq!(index.line_col(4), None);
+}
