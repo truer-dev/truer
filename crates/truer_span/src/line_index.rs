@@ -7,7 +7,7 @@ pub struct LineCol {
 #[derive(Debug)]
 pub struct LineIndex {
     line_starts: Vec<u32>,
-    len: u32,
+    is_char_boundary: Vec<bool>,
 }
 
 impl LineIndex {
@@ -23,14 +23,23 @@ impl LineIndex {
                 })
                 .map(|(i, _)| i as u32 + 1),
         );
+        let mut is_char_boundary = vec![false; bytes.len() + 1];
+        for i in text.char_indices().map(|(i, _)| i).chain([bytes.len()]) {
+            is_char_boundary[i] = true;
+        }
         Self {
             line_starts,
-            len: bytes.len() as u32,
+            is_char_boundary,
         }
     }
 
     pub fn line_col(&self, offset: u32) -> Option<LineCol> {
-        if offset > self.len {
+        if !self
+            .is_char_boundary
+            .get(offset as usize)
+            .copied()
+            .unwrap_or(false)
+        {
             return None;
         }
         let line = self.line_starts.partition_point(|&start| start <= offset) - 1;
