@@ -47,3 +47,9 @@ fn carriage_return_before_a_pair_is_its_own_break() {
     let index = LineIndex::new("a\r\r\nb");
     assert_eq!(index.line_col(4), Some(LineCol { line: 2, col: 0 }));
 }
+
+#[test]
+fn offset_at_the_end_of_a_text_is_addressable() {
+    let index = LineIndex::new("abc");
+    assert_eq!(index.line_col(3), Some(LineCol { line: 0, col: 3 }));
+}
