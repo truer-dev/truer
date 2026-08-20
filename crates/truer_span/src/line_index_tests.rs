@@ -23,3 +23,9 @@ fn offset_on_newline_ends_the_line_it_terminates() {
     let index = LineIndex::new("a\nb");
     assert_eq!(index.line_col(1), Some(LineCol { line: 0, col: 1 }));
 }
+
+#[test]
+fn offset_after_newline_starts_the_next_line() {
+    let index = LineIndex::new("a\nb");
+    assert_eq!(index.line_col(2), Some(LineCol { line: 1, col: 0 }));
+}
