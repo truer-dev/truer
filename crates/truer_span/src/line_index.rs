@@ -5,17 +5,27 @@ pub struct LineCol {
 }
 
 #[derive(Debug)]
-pub struct LineIndex;
+pub struct LineIndex {
+    line_starts: Vec<u32>,
+}
 
 impl LineIndex {
-    pub fn new(_text: &str) -> Self {
-        Self
+    pub fn new(text: &str) -> Self {
+        let mut line_starts = vec![0];
+        line_starts.extend(
+            text.bytes()
+                .enumerate()
+                .filter(|&(_, byte)| byte == b'\n')
+                .map(|(i, _)| i as u32 + 1),
+        );
+        Self { line_starts }
     }
 
     pub fn line_col(&self, offset: u32) -> Option<LineCol> {
+        let line = self.line_starts.partition_point(|&start| start <= offset) - 1;
         Some(LineCol {
-            line: 0,
-            col: offset,
+            line: line as u32,
+            col: offset - self.line_starts[line],
         })
     }
 }
