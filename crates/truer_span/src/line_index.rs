@@ -11,11 +11,15 @@ pub struct LineIndex {
 
 impl LineIndex {
     pub fn new(text: &str) -> Self {
+        let bytes = text.as_bytes();
         let mut line_starts = vec![0];
         line_starts.extend(
-            text.bytes()
+            bytes
+                .iter()
                 .enumerate()
-                .filter(|&(_, byte)| byte == b'\n')
+                .filter(|&(i, &byte)| {
+                    byte == b'\n' || (byte == b'\r' && bytes.get(i + 1) != Some(&b'\n'))
+                })
                 .map(|(i, _)| i as u32 + 1),
         );
         Self { line_starts }
