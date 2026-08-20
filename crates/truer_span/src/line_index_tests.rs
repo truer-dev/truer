@@ -35,3 +35,9 @@ fn carriage_return_and_newline_together_are_one_break() {
     let index = LineIndex::new("a\r\nb");
     assert_eq!(index.line_col(3), Some(LineCol { line: 1, col: 0 }));
 }
+
+#[test]
+fn lone_carriage_return_is_a_break() {
+    let index = LineIndex::new("a\rb");
+    assert_eq!(index.line_col(2), Some(LineCol { line: 1, col: 0 }));
+}
