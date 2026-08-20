@@ -12,8 +12,11 @@ impl LineIndex {
         Self
     }
 
-    pub fn line_col(&self, _offset: u32) -> Option<LineCol> {
-        Some(LineCol { line: 0, col: 0 })
+    pub fn line_col(&self, offset: u32) -> Option<LineCol> {
+        Some(LineCol {
+            line: 0,
+            col: offset,
+        })
     }
 }
 
