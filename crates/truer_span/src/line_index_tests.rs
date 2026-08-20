@@ -17,3 +17,9 @@ fn column_counts_bytes_not_characters() {
     let index = LineIndex::new("café x");
     assert_eq!(index.line_col(6), Some(LineCol { line: 0, col: 6 }));
 }
+
+#[test]
+fn offset_on_newline_ends_the_line_it_terminates() {
+    let index = LineIndex::new("a\nb");
+    assert_eq!(index.line_col(1), Some(LineCol { line: 0, col: 1 }));
+}
