@@ -7,6 +7,7 @@ pub struct LineCol {
 #[derive(Debug)]
 pub struct LineIndex {
     line_starts: Vec<u32>,
+    len: u32,
 }
 
 impl LineIndex {
@@ -22,10 +23,16 @@ impl LineIndex {
                 })
                 .map(|(i, _)| i as u32 + 1),
         );
-        Self { line_starts }
+        Self {
+            line_starts,
+            len: bytes.len() as u32,
+        }
     }
 
     pub fn line_col(&self, offset: u32) -> Option<LineCol> {
+        if offset > self.len {
+            return None;
+        }
         let line = self.line_starts.partition_point(|&start| start <= offset) - 1;
         Some(LineCol {
             line: line as u32,
