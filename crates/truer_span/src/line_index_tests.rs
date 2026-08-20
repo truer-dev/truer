@@ -77,3 +77,9 @@ fn offset_inside_a_character_on_a_later_line_has_no_position() {
     let index = LineIndex::new("a\né");
     assert_eq!(index.line_col(3), None);
 }
+
+#[test]
+fn line_separator_does_not_break_a_line() {
+    let index = LineIndex::new("a\u{2028}b");
+    assert_eq!(index.line_col(4), Some(LineCol { line: 0, col: 4 }));
+}
