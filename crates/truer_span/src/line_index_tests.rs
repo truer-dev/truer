@@ -378,6 +378,12 @@ fn later_line_span_excludes_its_terminator() {
 }
 
 #[test]
+fn empty_text_has_no_lines() {
+    let index = LineIndex::new("");
+    assert_eq!(index.line_count(), 0);
+}
+
+#[test]
 fn narrow_conversion_counts_units_not_bytes() {
     let index = LineIndex::new("€€x");
     assert_eq!(
