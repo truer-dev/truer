@@ -71,7 +71,7 @@ impl LineIndex {
             self.wide_reduction(encoding, line_start, line_start.saturating_add(wide.col));
         let col = wide.col + reduction;
         let offset = line_start.checked_add(col)?;
-        if self.splits_a_character(offset) {
+        if offset > self.len || self.splits_a_character(offset) {
             return None;
         }
         Some(LineCol {
