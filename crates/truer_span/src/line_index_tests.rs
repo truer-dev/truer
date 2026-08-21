@@ -486,6 +486,17 @@ fn text_mixing_every_line_break_is_counted_once_per_break() {
 }
 
 #[test]
+fn line_span_agrees_with_the_position_of_its_start() {
+    let text = "const café = 1;\nlet x = 2;\n";
+    let index = LineIndex::new(text);
+    for line in 0..index.line_count() {
+        let start = index.line_span(line).unwrap().start();
+        assert_eq!(index.offset(LineCol { line, col: 0 }), Some(start));
+        assert_eq!(index.line_col(start), Some(LineCol { line, col: 0 }));
+    }
+}
+
+#[test]
 fn narrow_conversion_counts_units_not_bytes() {
     let index = LineIndex::new("€€x");
     assert_eq!(
