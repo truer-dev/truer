@@ -134,3 +134,10 @@ fn caret_after_the_last_character_is_an_offset() {
     let index = LineIndex::new("abc");
     assert_eq!(index.offset(LineCol { line: 0, col: 3 }), Some(3));
 }
+
+#[test]
+fn position_round_trips_from_the_offset_it_came_from() {
+    let index = LineIndex::new("café x");
+    let line_col = index.line_col(6).unwrap();
+    assert_eq!(index.offset(line_col), Some(6));
+}
