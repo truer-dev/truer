@@ -90,6 +90,10 @@ impl LineIndex {
         })
     }
 
+    pub fn line_count(&self) -> u32 {
+        0
+    }
+
     pub fn line_span(&self, line: u32) -> Option<Span> {
         let start = *self.line_starts.get(line as usize)?;
         let end = match self.line_starts.get(line as usize + 1) {
