@@ -34,15 +34,13 @@ impl LineIndex {
     pub fn offset(&self, line_col: LineCol) -> Option<u32> {
         let line = line_col.line as usize;
         let start = *self.line_starts.get(line)?;
-        let is_last_line = line + 1 >= self.line_starts.len();
-        let end = self.line_starts.get(line + 1).copied().unwrap_or(self.len);
+        let end_exclusive = self
+            .line_starts
+            .get(line + 1)
+            .copied()
+            .unwrap_or(self.len + 1);
         let offset = start + line_col.col;
-        let in_bounds = if is_last_line {
-            offset <= end
-        } else {
-            offset < end
-        };
-        in_bounds.then_some(offset)
+        (offset < end_exclusive).then_some(offset)
     }
 
     fn splits_a_character(&self, offset: u32) -> bool {
