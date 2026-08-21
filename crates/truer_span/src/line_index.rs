@@ -55,11 +55,21 @@ impl LineIndex {
     }
 
     pub fn to_wide(&self, encoding: WideEncoding, line_col: LineCol) -> Option<WideLineCol> {
+        let offset = self.offset(line_col)?;
+        let line_start = self.line_starts[line_col.line as usize];
         match encoding {
-            WideEncoding::Utf16 => Some(WideLineCol {
-                line: line_col.line,
-                col: line_col.col,
-            }),
+            WideEncoding::Utf16 => {
+                let reduction: u32 = self
+                    .non_ascii_chars
+                    .iter()
+                    .filter(|&&(start, _)| (line_start..offset).contains(&start))
+                    .map(|&(_, len)| len - 1)
+                    .sum();
+                Some(WideLineCol {
+                    line: line_col.line,
+                    col: line_col.col - reduction,
+                })
+            }
         }
     }
 
