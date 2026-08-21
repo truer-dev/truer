@@ -41,3 +41,10 @@ fn consumer_calls_the_indexs_line_queries() {
     assert_eq!(index.line_span(1), Some(Span::new(3, 5)));
     assert_eq!(index.line_count(), 2);
 }
+
+#[test]
+fn consumer_calls_every_span_method() {
+    let span = Span::new(2, 5);
+    assert_eq!((span.start(), span.end(), span.is_empty()), (2, 5, false));
+    assert!(Span::empty(2).is_empty());
+}
