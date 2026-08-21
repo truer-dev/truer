@@ -128,3 +128,9 @@ fn position_on_a_later_line_resolves_past_its_break() {
     let index = LineIndex::new("a\nb");
     assert_eq!(index.offset(LineCol { line: 1, col: 0 }), Some(2));
 }
+
+#[test]
+fn caret_after_the_last_character_is_an_offset() {
+    let index = LineIndex::new("abc");
+    assert_eq!(index.offset(LineCol { line: 0, col: 3 }), Some(3));
+}
