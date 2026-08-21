@@ -290,3 +290,10 @@ fn position_after_a_surrogate_pair_converts_back() {
         Some(LineCol { line: 0, col: 4 })
     );
 }
+
+#[test]
+fn wide_column_inside_a_surrogate_pair_has_no_narrow_position() {
+    let index = LineIndex::new("𝄞x");
+    let wide = WideLineCol { line: 0, col: 1 };
+    assert_eq!(index.to_narrow(WideEncoding::Utf16, wide), None);
+}
