@@ -110,3 +110,9 @@ fn large_text_is_indexed_and_queried_without_quadratic_cost() {
         assert_eq!(index.line_col(line * 2), Some(LineCol { line, col: 0 }));
     }
 }
+
+#[test]
+fn first_position_is_first_offset() {
+    let index = LineIndex::new("");
+    assert_eq!(index.offset(LineCol { line: 0, col: 0 }), Some(0));
+}
