@@ -442,6 +442,17 @@ fn every_character_boundary_round_trips_through_line_and_column() {
 }
 
 #[test]
+fn every_character_boundary_round_trips_through_utf16() {
+    let text = "const café = 1;\nlet x = 2;\n";
+    let index = LineIndex::new(text);
+    for offset in (0..=text.len() as u32).filter(|&offset| text.is_char_boundary(offset as usize)) {
+        let line_col = index.line_col(offset).unwrap();
+        let wide = index.to_wide(WideEncoding::Utf16, line_col).unwrap();
+        assert_eq!(index.to_narrow(WideEncoding::Utf16, wide), Some(line_col));
+    }
+}
+
+#[test]
 fn narrow_conversion_counts_units_not_bytes() {
     let index = LineIndex::new("€€x");
     assert_eq!(
