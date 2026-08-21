@@ -177,3 +177,15 @@ fn column_inside_a_character_has_no_offset() {
     let index = LineIndex::new("café");
     assert_eq!(index.offset(LineCol { line: 0, col: 4 }), None);
 }
+
+#[test]
+fn column_that_overflows_the_offset_has_no_offset() {
+    let index = LineIndex::new("ab\ncd");
+    assert_eq!(
+        index.offset(LineCol {
+            line: 1,
+            col: u32::MAX
+        }),
+        None
+    );
+}
