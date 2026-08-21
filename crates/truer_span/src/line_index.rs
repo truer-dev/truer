@@ -74,6 +74,24 @@ impl LineIndex {
         })
     }
 
+    pub fn to_narrow(&self, encoding: WideEncoding, wide: WideLineCol) -> Option<LineCol> {
+        let line_start = *self.line_starts.get(wide.line as usize)?;
+        let units = match encoding {
+            WideEncoding::Utf16 => utf16_units,
+            WideEncoding::Utf32 => |_| 1,
+        };
+        let reduction: u32 = self
+            .non_ascii_chars
+            .iter()
+            .filter(|&&(start, _)| start >= line_start && start - line_start < wide.col)
+            .map(|&(_, len)| len - units(len))
+            .sum();
+        Some(LineCol {
+            line: wide.line,
+            col: wide.col + reduction,
+        })
+    }
+
     fn splits_a_character(&self, offset: u32) -> bool {
         match self
             .non_ascii_chars
