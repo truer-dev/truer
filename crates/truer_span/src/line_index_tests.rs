@@ -165,3 +165,9 @@ fn column_past_the_end_of_its_line_has_no_offset() {
     let index = LineIndex::new("ab\ncd");
     assert_eq!(index.offset(LineCol { line: 0, col: 3 }), None);
 }
+
+#[test]
+fn column_past_the_end_of_the_last_line_has_no_offset() {
+    let index = LineIndex::new("ab\ncd");
+    assert_eq!(index.offset(LineCol { line: 1, col: 3 }), None);
+}
