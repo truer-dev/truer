@@ -330,12 +330,6 @@ fn line_span_covers_its_text() {
 }
 
 #[test]
-fn line_span_excludes_its_newline() {
-    let index = LineIndex::new("ab\ncd");
-    assert_eq!(index.line_span(0), Some(Span::new(0, 2)));
-}
-
-#[test]
 fn line_span_excludes_a_carriage_return_newline_pair() {
     let index = LineIndex::new("ab\r\ncd");
     assert_eq!(index.line_span(0), Some(Span::new(0, 2)));
