@@ -1,4 +1,5 @@
 use super::{LineCol, LineIndex, WideEncoding, WideLineCol};
+use crate::Span;
 
 #[test]
 fn line_col_of_empty_text_is_origin() {
@@ -320,6 +321,12 @@ fn wide_line_past_the_end_has_no_narrow_position() {
     let index = LineIndex::new("abc");
     let wide = WideLineCol { line: 1, col: 0 };
     assert_eq!(index.to_narrow(WideEncoding::Utf16, wide), None);
+}
+
+#[test]
+fn line_span_covers_its_text() {
+    let index = LineIndex::new("ab\ncd");
+    assert_eq!(index.line_span(0), Some(Span::new(0, 2)));
 }
 
 #[test]
