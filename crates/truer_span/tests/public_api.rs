@@ -34,3 +34,10 @@ fn consumer_calls_every_method_the_index_exposes() {
     let narrow = index.to_narrow(WideEncoding::Utf16, wide).unwrap();
     assert_eq!(narrow, line_col);
 }
+
+#[test]
+fn consumer_calls_the_indexs_line_queries() {
+    let index = LineIndex::new("ab\ncd");
+    assert_eq!(index.line_span(1), Some(Span::new(3, 5)));
+    assert_eq!(index.line_count(), 2);
+}
