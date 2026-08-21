@@ -199,3 +199,13 @@ fn ascii_position_is_unchanged_in_utf16() {
         Some(WideLineCol { line: 0, col: 2 })
     );
 }
+
+#[test]
+fn two_byte_character_shortens_the_utf16_column() {
+    let index = LineIndex::new("café x");
+    let line_col = LineCol { line: 0, col: 6 };
+    assert_eq!(
+        index.to_wide(WideEncoding::Utf16, line_col),
+        Some(WideLineCol { line: 0, col: 5 })
+    );
+}
