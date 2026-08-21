@@ -58,16 +58,7 @@ impl LineIndex {
     pub fn to_wide(&self, encoding: WideEncoding, line_col: LineCol) -> Option<WideLineCol> {
         let offset = self.offset(line_col)?;
         let line_start = self.line_starts[line_col.line as usize];
-        let units = match encoding {
-            WideEncoding::Utf16 => utf16_units,
-            WideEncoding::Utf32 => |_| 1,
-        };
-        let reduction: u32 = self
-            .non_ascii_chars
-            .iter()
-            .filter(|&&(start, _)| (line_start..offset).contains(&start))
-            .map(|&(_, len)| len - units(len))
-            .sum();
+        let reduction = self.wide_reduction(encoding, line_start, offset);
         Some(WideLineCol {
             line: line_col.line,
             col: line_col.col - reduction,
@@ -76,20 +67,21 @@ impl LineIndex {
 
     pub fn to_narrow(&self, encoding: WideEncoding, wide: WideLineCol) -> Option<LineCol> {
         let line_start = *self.line_starts.get(wide.line as usize)?;
-        let units = match encoding {
-            WideEncoding::Utf16 => utf16_units,
-            WideEncoding::Utf32 => |_| 1,
-        };
-        let reduction: u32 = self
-            .non_ascii_chars
-            .iter()
-            .filter(|&&(start, _)| start >= line_start && start - line_start < wide.col)
-            .map(|&(_, len)| len - units(len))
-            .sum();
+        let reduction =
+            self.wide_reduction(encoding, line_start, line_start.saturating_add(wide.col));
         Some(LineCol {
             line: wide.line,
             col: wide.col + reduction,
         })
+    }
+
+    fn wide_reduction(&self, encoding: WideEncoding, line_start: u32, offset: u32) -> u32 {
+        let units = units_for(encoding);
+        self.non_ascii_chars
+            .iter()
+            .filter(|&&(start, _)| (line_start..offset).contains(&start))
+            .map(|&(_, len)| len - units(len))
+            .sum()
     }
 
     fn splits_a_character(&self, offset: u32) -> bool {
@@ -132,6 +124,13 @@ fn non_ascii_chars_of(text: &str) -> Box<[(u32, u32)]> {
 
 fn utf16_units(len_utf8: u32) -> u32 {
     if len_utf8 > 3 { 2 } else { 1 }
+}
+
+fn units_for(encoding: WideEncoding) -> fn(u32) -> u32 {
+    match encoding {
+        WideEncoding::Utf16 => utf16_units,
+        WideEncoding::Utf32 => |_| 1,
+    }
 }
 
 #[cfg(test)]
