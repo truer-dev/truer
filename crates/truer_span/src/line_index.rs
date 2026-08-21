@@ -10,7 +10,7 @@ pub struct WideLineCol {
     pub col: u32,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum WideEncoding {
     Utf16,
     Utf32,
