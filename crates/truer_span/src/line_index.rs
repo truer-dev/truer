@@ -4,6 +4,17 @@ pub struct LineCol {
     pub col: u32,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct WideLineCol {
+    pub line: u32,
+    pub col: u32,
+}
+
+#[derive(Debug)]
+pub enum WideEncoding {
+    Utf16,
+}
+
 #[derive(Debug)]
 pub struct LineIndex {
     line_starts: Box<[u32]>,
@@ -41,6 +52,15 @@ impl LineIndex {
             .unwrap_or(self.len + 1);
         let offset = start.checked_add(line_col.col)?;
         (offset < end_exclusive && !self.splits_a_character(offset)).then_some(offset)
+    }
+
+    pub fn to_wide(&self, encoding: WideEncoding, line_col: LineCol) -> Option<WideLineCol> {
+        match encoding {
+            WideEncoding::Utf16 => Some(WideLineCol {
+                line: line_col.line,
+                col: line_col.col,
+            }),
+        }
     }
 
     fn splits_a_character(&self, offset: u32) -> bool {
