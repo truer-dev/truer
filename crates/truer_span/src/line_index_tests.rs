@@ -384,6 +384,12 @@ fn empty_text_has_no_lines() {
 }
 
 #[test]
+fn text_without_a_trailing_newline_counts_its_last_line() {
+    let index = LineIndex::new("a");
+    assert_eq!(index.line_count(), 1);
+}
+
+#[test]
 fn narrow_conversion_counts_units_not_bytes() {
     let index = LineIndex::new("€€x");
     assert_eq!(
