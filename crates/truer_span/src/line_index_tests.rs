@@ -270,3 +270,13 @@ fn column_inside_a_character_has_no_wide_position() {
     let line_col = LineCol { line: 0, col: 4 };
     assert_eq!(index.to_wide(WideEncoding::Utf16, line_col), None);
 }
+
+#[test]
+fn wide_position_converts_back() {
+    let index = LineIndex::new("café x");
+    let wide = WideLineCol { line: 0, col: 5 };
+    assert_eq!(
+        index.to_narrow(WideEncoding::Utf16, wide),
+        Some(LineCol { line: 0, col: 6 })
+    );
+}
