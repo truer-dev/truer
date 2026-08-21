@@ -42,10 +42,10 @@ impl LineIndex {
         if offset > self.len || self.splits_a_character(offset) {
             return None;
         }
-        let line = line_of(&self.line_starts, offset);
+        let line = self.line_starts.partition_point(|&start| start <= offset) - 1;
         Some(LineCol {
-            line,
-            col: offset - self.line_starts[line as usize],
+            line: line as u32,
+            col: offset - self.line_starts[line],
         })
     }
 
@@ -162,18 +162,20 @@ fn ends_a_line(bytes: &[u8], i: usize, byte: u8) -> bool {
     byte == b'\n' || (byte == b'\r' && bytes.get(i + 1) != Some(&b'\n'))
 }
 
-fn line_of(line_starts: &[u32], offset: u32) -> u32 {
-    line_starts.partition_point(|&start| start <= offset) as u32 - 1
-}
-
 fn crlf_lines_of(text: &str, line_starts: &[u32]) -> Box<[u32]> {
     let bytes = text.as_bytes();
-    bytes
+    line_starts
         .iter()
         .enumerate()
-        .filter(|&(i, &byte)| byte == b'\r' && bytes.get(i + 1) == Some(&b'\n'))
-        .map(|(i, _)| line_of(line_starts, i as u32))
+        .skip(1)
+        .filter(|&(_, &start)| ends_with_a_pair(bytes, start))
+        .map(|(i, _)| i as u32 - 1)
         .collect()
+}
+
+fn ends_with_a_pair(bytes: &[u8], line_start: u32) -> bool {
+    let i = line_start as usize;
+    i >= 2 && bytes[i - 1] == b'\n' && bytes[i - 2] == b'\r'
 }
 
 fn non_ascii_chars_of(text: &str) -> Box<[(u32, u32)]> {
