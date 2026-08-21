@@ -1,6 +1,10 @@
 use super::{LineCol, LineIndex, WideEncoding, WideLineCol};
 use crate::Span;
 
+fn char_boundary_offsets(text: &str) -> impl Iterator<Item = u32> {
+    (0..=text.len() as u32).filter(|&offset| text.is_char_boundary(offset as usize))
+}
+
 #[test]
 fn line_col_of_empty_text_is_origin() {
     let index = LineIndex::new("");
@@ -435,7 +439,7 @@ fn trailing_whitespace_only_line_is_counted() {
 fn every_character_boundary_round_trips_through_line_and_column() {
     let text = "const café = 1;\nlet x = 2;\n";
     let index = LineIndex::new(text);
-    for offset in (0..=text.len() as u32).filter(|&offset| text.is_char_boundary(offset as usize)) {
+    for offset in char_boundary_offsets(text) {
         let line_col = index.line_col(offset).unwrap();
         assert_eq!(index.offset(line_col), Some(offset));
     }
@@ -445,7 +449,7 @@ fn every_character_boundary_round_trips_through_line_and_column() {
 fn every_character_boundary_round_trips_through_utf16() {
     let text = "const café = 1;\nlet x = 2;\n";
     let index = LineIndex::new(text);
-    for offset in (0..=text.len() as u32).filter(|&offset| text.is_char_boundary(offset as usize)) {
+    for offset in char_boundary_offsets(text) {
         let line_col = index.line_col(offset).unwrap();
         let wide = index.to_wide(WideEncoding::Utf16, line_col).unwrap();
         assert_eq!(index.to_narrow(WideEncoding::Utf16, wide), Some(line_col));
@@ -456,8 +460,7 @@ fn every_character_boundary_round_trips_through_utf16() {
 fn position_never_decreases_as_offset_increases() {
     let text = "const café = 1;\nlet x = 2;\n";
     let index = LineIndex::new(text);
-    let positions: Vec<_> = (0..=text.len() as u32)
-        .filter(|&offset| text.is_char_boundary(offset as usize))
+    let positions: Vec<_> = char_boundary_offsets(text)
         .map(|offset| {
             let line_col = index.line_col(offset).unwrap();
             (line_col.line, line_col.col)
