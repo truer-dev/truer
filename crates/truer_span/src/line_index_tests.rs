@@ -342,19 +342,19 @@ fn line_span_excludes_a_lone_carriage_return() {
 }
 
 #[test]
-fn the_last_line_ends_at_the_end_of_the_text() {
+fn last_line_span_ends_at_the_end_of_the_text() {
     let index = LineIndex::new("ab\ncd");
     assert_eq!(index.line_span(1), Some(Span::new(3, 5)));
 }
 
 #[test]
-fn a_final_empty_line_is_an_empty_span() {
+fn final_empty_line_is_an_empty_span() {
     let index = LineIndex::new("a\n");
     assert_eq!(index.line_span(1), Some(Span::new(2, 2)));
 }
 
 #[test]
-fn an_empty_text_has_one_empty_line() {
+fn empty_text_has_one_empty_span() {
     let index = LineIndex::new("");
     assert_eq!(index.line_span(0), Some(Span::new(0, 0)));
 }
@@ -366,7 +366,7 @@ fn line_span_counts_bytes_not_characters() {
 }
 
 #[test]
-fn a_line_past_the_end_has_no_span() {
+fn line_past_the_end_has_no_span() {
     let index = LineIndex::new("abc");
     assert_eq!(index.line_span(1), None);
 }
