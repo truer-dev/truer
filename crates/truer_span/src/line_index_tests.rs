@@ -469,7 +469,9 @@ fn position_never_decreases_as_offset_increases() {
             (line_col.line, line_col.col)
         })
         .collect();
-    assert!(positions.windows(2).all(|pair| pair[0] <= pair[1]));
+    for pair in positions.windows(2) {
+        assert!(pair[0] <= pair[1], "{:?} then {:?}", pair[0], pair[1]);
+    }
 }
 
 #[test]
