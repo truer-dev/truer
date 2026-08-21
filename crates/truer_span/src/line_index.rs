@@ -91,7 +91,11 @@ impl LineIndex {
     }
 
     pub fn line_count(&self) -> u32 {
-        0
+        if self.len == 0 {
+            0
+        } else {
+            self.line_starts.len() as u32
+        }
     }
 
     pub fn line_span(&self, line: u32) -> Option<Span> {
