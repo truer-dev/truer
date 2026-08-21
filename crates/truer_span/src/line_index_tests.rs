@@ -453,6 +453,20 @@ fn every_character_boundary_round_trips_through_utf16() {
 }
 
 #[test]
+fn position_never_decreases_as_offset_increases() {
+    let text = "const café = 1;\nlet x = 2;\n";
+    let index = LineIndex::new(text);
+    let positions: Vec<_> = (0..=text.len() as u32)
+        .filter(|&offset| text.is_char_boundary(offset as usize))
+        .map(|offset| {
+            let line_col = index.line_col(offset).unwrap();
+            (line_col.line, line_col.col)
+        })
+        .collect();
+    assert!(positions.windows(2).all(|pair| pair[0] <= pair[1]));
+}
+
+#[test]
 fn narrow_conversion_counts_units_not_bytes() {
     let index = LineIndex::new("€€x");
     assert_eq!(
