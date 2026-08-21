@@ -229,3 +229,13 @@ fn character_outside_the_basic_plane_counts_twice_in_utf16() {
         Some(WideLineCol { line: 0, col: 2 })
     );
 }
+
+#[test]
+fn character_outside_the_basic_plane_counts_once_in_utf32() {
+    let index = LineIndex::new("𝄞x");
+    let line_col = LineCol { line: 0, col: 4 };
+    assert_eq!(
+        index.to_wide(WideEncoding::Utf32, line_col),
+        Some(WideLineCol { line: 0, col: 1 })
+    );
+}
