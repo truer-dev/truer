@@ -366,6 +366,12 @@ fn an_empty_text_has_one_empty_line() {
 }
 
 #[test]
+fn line_span_counts_bytes_not_characters() {
+    let index = LineIndex::new("café\nx");
+    assert_eq!(index.line_span(0), Some(Span::new(0, 5)));
+}
+
+#[test]
 fn narrow_conversion_counts_units_not_bytes() {
     let index = LineIndex::new("€€x");
     assert_eq!(
