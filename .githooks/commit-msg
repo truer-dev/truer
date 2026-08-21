@@ -39,8 +39,8 @@ fi
 [ -z "$strays" ] ||
   fail "scope $scope does not cover $(echo "$strays" | tr '\n' ' ')"
 
-tests=$(staged | grep -c '_tests\.rs$')
-sources=$(staged | grep -vc '_tests\.rs$')
+tests=$(staged | grep -Ec '(_tests\.rs$|/tests/)')
+sources=$(staged | grep -Evc '(_tests\.rs$|/tests/)')
 
 case "${subject%%(*}" in
 test)
