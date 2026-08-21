@@ -219,3 +219,13 @@ fn three_byte_character_shortens_the_utf16_column_further() {
         Some(WideLineCol { line: 0, col: 2 })
     );
 }
+
+#[test]
+fn character_outside_the_basic_plane_counts_twice_in_utf16() {
+    let index = LineIndex::new("𝄞x");
+    let line_col = LineCol { line: 0, col: 4 };
+    assert_eq!(
+        index.to_wide(WideEncoding::Utf16, line_col),
+        Some(WideLineCol { line: 0, col: 2 })
+    );
+}
