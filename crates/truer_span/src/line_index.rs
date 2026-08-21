@@ -4,6 +4,18 @@ pub struct LineCol {
     pub col: u32,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct WideLineCol {
+    pub line: u32,
+    pub col: u32,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum WideEncoding {
+    Utf16,
+    Utf32,
+}
+
 #[derive(Debug)]
 pub struct LineIndex {
     line_starts: Box<[u32]>,
@@ -43,6 +55,60 @@ impl LineIndex {
         (offset < end_exclusive && !self.splits_a_character(offset)).then_some(offset)
     }
 
+    pub fn to_wide(&self, encoding: WideEncoding, line_col: LineCol) -> Option<WideLineCol> {
+        let offset = self.offset(line_col)?;
+        let line_start = self.line_starts[line_col.line as usize];
+        let reduction = self.wide_reduction(encoding, line_start, offset);
+        Some(WideLineCol {
+            line: line_col.line,
+            col: line_col.col - reduction,
+        })
+    }
+
+    pub fn to_narrow(&self, encoding: WideEncoding, wide: WideLineCol) -> Option<LineCol> {
+        let line = wide.line as usize;
+        let line_start = *self.line_starts.get(line)?;
+        let end_exclusive = self
+            .line_starts
+            .get(line + 1)
+            .copied()
+            .unwrap_or(self.len + 1);
+        let col = self.narrow_column(encoding, line_start, wide.col);
+        let offset = line_start.checked_add(col)?;
+        if offset >= end_exclusive || self.splits_a_character(offset) {
+            return None;
+        }
+        Some(LineCol {
+            line: wide.line,
+            col,
+        })
+    }
+
+    fn narrow_column(&self, encoding: WideEncoding, line_start: u32, wide_col: u32) -> u32 {
+        let mut reduction = 0;
+        for &(start, len) in self.non_ascii_chars_from(line_start) {
+            if start - line_start - reduction >= wide_col {
+                break;
+            }
+            reduction += len - units_for(encoding, len);
+        }
+        wide_col + reduction
+    }
+
+    fn wide_reduction(&self, encoding: WideEncoding, line_start: u32, offset: u32) -> u32 {
+        self.non_ascii_chars_from(line_start)
+            .take_while(|&&(start, _)| start < offset)
+            .map(|&(_, len)| len - units_for(encoding, len))
+            .sum()
+    }
+
+    fn non_ascii_chars_from(&self, offset: u32) -> std::slice::Iter<'_, (u32, u32)> {
+        let first = self
+            .non_ascii_chars
+            .partition_point(|&(start, _)| start < offset);
+        self.non_ascii_chars[first..].iter()
+    }
+
     fn splits_a_character(&self, offset: u32) -> bool {
         match self
             .non_ascii_chars
@@ -79,6 +145,13 @@ fn non_ascii_chars_of(text: &str) -> Box<[(u32, u32)]> {
         .filter(|&(_, ch)| !ch.is_ascii())
         .map(|(i, ch)| (i as u32, ch.len_utf8() as u32))
         .collect()
+}
+
+fn units_for(encoding: WideEncoding, len_utf8: u32) -> u32 {
+    match encoding {
+        WideEncoding::Utf16 if len_utf8 > 3 => 2,
+        _ => 1,
+    }
 }
 
 #[cfg(test)]
