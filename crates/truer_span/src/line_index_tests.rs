@@ -390,6 +390,12 @@ fn text_without_a_trailing_newline_counts_its_last_line() {
 }
 
 #[test]
+fn trailing_newline_does_not_add_a_line() {
+    let index = LineIndex::new("a\n");
+    assert_eq!(index.line_count(), 1);
+}
+
+#[test]
 fn narrow_conversion_counts_units_not_bytes() {
     let index = LineIndex::new("€€x");
     assert_eq!(
