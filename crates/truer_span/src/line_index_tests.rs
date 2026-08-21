@@ -280,3 +280,13 @@ fn wide_position_converts_back() {
         Some(LineCol { line: 0, col: 6 })
     );
 }
+
+#[test]
+fn position_after_a_surrogate_pair_converts_back() {
+    let index = LineIndex::new("𝄞x");
+    let wide = WideLineCol { line: 0, col: 2 };
+    assert_eq!(
+        index.to_narrow(WideEncoding::Utf16, wide),
+        Some(LineCol { line: 0, col: 4 })
+    );
+}
