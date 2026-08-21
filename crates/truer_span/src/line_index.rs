@@ -69,6 +69,10 @@ impl LineIndex {
         let line_start = *self.line_starts.get(wide.line as usize)?;
         let reduction =
             self.wide_reduction(encoding, line_start, line_start.saturating_add(wide.col));
+        let offset = line_start + wide.col + reduction;
+        if self.splits_a_character(offset) {
+            return None;
+        }
         Some(LineCol {
             line: wide.line,
             col: wide.col + reduction,
