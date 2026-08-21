@@ -470,7 +470,7 @@ fn position_never_decreases_as_offset_increases() {
 }
 
 #[test]
-fn a_multi_character_grapheme_is_measured_by_its_parts_not_as_one() {
+fn multi_character_grapheme_is_measured_by_its_parts_not_as_one() {
     let index = LineIndex::new("// 👨‍👩‍👧‍👦\nlet a = 1;\n");
     assert_eq!(index.offset(LineCol { line: 1, col: 0 }), Some(29));
     assert_eq!(
@@ -480,7 +480,7 @@ fn a_multi_character_grapheme_is_measured_by_its_parts_not_as_one() {
 }
 
 #[test]
-fn a_text_mixing_every_line_break_is_counted_once_per_break() {
+fn text_mixing_every_line_break_is_counted_once_per_break() {
     let index = LineIndex::new("a\nb\r\nc\rd");
     assert_eq!(index.line_count(), 4);
 }
