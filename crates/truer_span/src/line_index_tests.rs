@@ -497,6 +497,18 @@ fn line_span_agrees_with_the_position_of_its_start() {
 }
 
 #[test]
+fn round_trips_hold_on_text_with_no_trailing_newline() {
+    let text = "const café = 1;\nlet x = 2;";
+    let index = LineIndex::new(text);
+    for offset in char_boundary_offsets(text) {
+        let line_col = index.line_col(offset).unwrap();
+        assert_eq!(index.offset(line_col), Some(offset));
+        let wide = index.to_wide(WideEncoding::Utf16, line_col).unwrap();
+        assert_eq!(index.to_narrow(WideEncoding::Utf16, wide), Some(line_col));
+    }
+}
+
+#[test]
 fn narrow_conversion_counts_units_not_bytes() {
     let index = LineIndex::new("€€x");
     assert_eq!(
