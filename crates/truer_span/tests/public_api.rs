@@ -1,4 +1,4 @@
-use truer_span::{LineCol, LineIndex, Span, WideLineCol};
+use truer_span::{LineCol, LineIndex, Span, WideEncoding, WideLineCol};
 
 #[test]
 fn consumer_reaches_span_type() {
@@ -18,4 +18,9 @@ fn consumer_reaches_line_col_type() {
 #[test]
 fn consumer_reaches_wide_line_col_type() {
     let _wide_line_col = WideLineCol { line: 0, col: 0 };
+}
+
+#[test]
+fn consumer_reaches_wide_encoding_type() {
+    let _encoding = WideEncoding::Utf16;
 }
