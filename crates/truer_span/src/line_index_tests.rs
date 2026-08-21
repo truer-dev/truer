@@ -432,6 +432,16 @@ fn trailing_whitespace_only_line_is_counted() {
 }
 
 #[test]
+fn every_character_boundary_round_trips_through_line_and_column() {
+    let text = "const café = 1;\nlet x = 2;\n";
+    let index = LineIndex::new(text);
+    for offset in (0..=text.len() as u32).filter(|&offset| text.is_char_boundary(offset as usize)) {
+        let line_col = index.line_col(offset).unwrap();
+        assert_eq!(index.offset(line_col), Some(offset));
+    }
+}
+
+#[test]
 fn narrow_conversion_counts_units_not_bytes() {
     let index = LineIndex::new("€€x");
     assert_eq!(
