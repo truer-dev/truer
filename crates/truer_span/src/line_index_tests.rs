@@ -297,3 +297,13 @@ fn wide_column_inside_a_surrogate_pair_has_no_narrow_position() {
     let wide = WideLineCol { line: 0, col: 1 };
     assert_eq!(index.to_narrow(WideEncoding::Utf16, wide), None);
 }
+
+#[test]
+fn same_wide_column_is_a_position_in_utf32() {
+    let index = LineIndex::new("𝄞x");
+    let wide = WideLineCol { line: 0, col: 1 };
+    assert_eq!(
+        index.to_narrow(WideEncoding::Utf32, wide),
+        Some(LineCol { line: 0, col: 4 })
+    );
+}
