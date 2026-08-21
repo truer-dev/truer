@@ -239,3 +239,13 @@ fn character_outside_the_basic_plane_counts_once_in_utf32() {
         Some(WideLineCol { line: 0, col: 1 })
     );
 }
+
+#[test]
+fn columns_on_a_later_line_are_converted_against_that_line() {
+    let index = LineIndex::new("é\né x");
+    let line_col = LineCol { line: 1, col: 3 };
+    assert_eq!(
+        index.to_wide(WideEncoding::Utf16, line_col),
+        Some(WideLineCol { line: 1, col: 2 })
+    );
+}
