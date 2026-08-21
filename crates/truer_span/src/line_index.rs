@@ -1,3 +1,5 @@
+use crate::Span;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct LineCol {
     pub line: u32,
@@ -82,6 +84,12 @@ impl LineIndex {
             line: wide.line,
             col,
         })
+    }
+
+    pub fn line_span(&self, line: u32) -> Option<Span> {
+        let start = *self.line_starts.get(line as usize)?;
+        let end = self.line_starts[line as usize + 1] - 1;
+        Some(Span::new(start, end))
     }
 
     fn narrow_column(&self, encoding: WideEncoding, line_start: u32, wide_col: u32) -> u32 {
