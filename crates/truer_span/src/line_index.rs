@@ -85,23 +85,14 @@ impl LineIndex {
     }
 
     fn narrow_column(&self, encoding: WideEncoding, line_start: u32, wide_col: u32) -> u32 {
-        let mut col = 0;
-        let mut remaining = wide_col;
+        let mut reduction = 0;
         for &(start, len) in self.non_ascii_chars_from(line_start) {
-            let ascii_before = start - line_start - col;
-            if ascii_before >= remaining {
+            if start - line_start - reduction >= wide_col {
                 break;
             }
-            remaining -= ascii_before;
-            col += ascii_before;
-            let wide_len = units_for(encoding, len);
-            if wide_len > remaining {
-                break;
-            }
-            remaining -= wide_len;
-            col += len;
+            reduction += len - units_for(encoding, len);
         }
-        col + remaining
+        wide_col + reduction
     }
 
     fn wide_reduction(&self, encoding: WideEncoding, line_start: u32, offset: u32) -> u32 {
