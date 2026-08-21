@@ -66,12 +66,18 @@ impl LineIndex {
     }
 
     pub fn to_narrow(&self, encoding: WideEncoding, wide: WideLineCol) -> Option<LineCol> {
-        let line_start = *self.line_starts.get(wide.line as usize)?;
+        let line = wide.line as usize;
+        let line_start = *self.line_starts.get(line)?;
+        let end_exclusive = self
+            .line_starts
+            .get(line + 1)
+            .copied()
+            .unwrap_or(self.len + 1);
         let reduction =
             self.wide_reduction(encoding, line_start, line_start.saturating_add(wide.col));
         let col = wide.col + reduction;
         let offset = line_start.checked_add(col)?;
-        if offset > self.len || self.splits_a_character(offset) {
+        if offset >= end_exclusive || self.splits_a_character(offset) {
             return None;
         }
         Some(LineCol {
