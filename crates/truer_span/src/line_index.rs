@@ -87,8 +87,10 @@ impl LineIndex {
     }
 
     pub fn line_span(&self, line: u32) -> Option<Span> {
-        let start = *self.line_starts.get(line as usize)?;
-        let end = self.line_starts[line as usize + 1] - 1;
+        let (start, end) = (
+            *self.line_starts.get(line as usize)?,
+            self.line_starts[line as usize + 1] - 1,
+        );
         Some(Span::new(start, end))
     }
 
