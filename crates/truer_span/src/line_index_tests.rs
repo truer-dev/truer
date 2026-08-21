@@ -1,6 +1,9 @@
 use super::{LineCol, LineIndex, WideEncoding, WideLineCol};
 use crate::Span;
 
+const FIXTURE: &str = "const café = 1;\nlet x = 2;\n";
+const UNTERMINATED_FIXTURE: &str = "const café = 1;\nlet x = 2;";
+
 fn char_boundary_offsets(text: &str) -> impl Iterator<Item = u32> {
     (0..=text.len() as u32).filter(|&offset| text.is_char_boundary(offset as usize))
 }
@@ -437,7 +440,7 @@ fn trailing_whitespace_only_line_is_counted() {
 
 #[test]
 fn every_character_boundary_round_trips_through_line_and_column() {
-    let text = "const café = 1;\nlet x = 2;\n";
+    let text = FIXTURE;
     let index = LineIndex::new(text);
     for offset in char_boundary_offsets(text) {
         let line_col = index.line_col(offset).unwrap();
@@ -447,7 +450,7 @@ fn every_character_boundary_round_trips_through_line_and_column() {
 
 #[test]
 fn every_character_boundary_round_trips_through_utf16() {
-    let text = "const café = 1;\nlet x = 2;\n";
+    let text = FIXTURE;
     let index = LineIndex::new(text);
     for offset in char_boundary_offsets(text) {
         let line_col = index.line_col(offset).unwrap();
@@ -458,7 +461,7 @@ fn every_character_boundary_round_trips_through_utf16() {
 
 #[test]
 fn position_never_decreases_as_offset_increases() {
-    let text = "const café = 1;\nlet x = 2;\n";
+    let text = FIXTURE;
     let index = LineIndex::new(text);
     let positions: Vec<_> = char_boundary_offsets(text)
         .map(|offset| {
@@ -487,7 +490,7 @@ fn text_mixing_every_line_break_is_counted_once_per_break() {
 
 #[test]
 fn line_span_agrees_with_the_position_of_its_start() {
-    let text = "const café = 1;\nlet x = 2;\n";
+    let text = FIXTURE;
     let index = LineIndex::new(text);
     for line in 0..index.line_count() {
         let start = index.line_span(line).unwrap().start();
@@ -498,7 +501,7 @@ fn line_span_agrees_with_the_position_of_its_start() {
 
 #[test]
 fn round_trips_hold_on_text_with_no_trailing_newline() {
-    let text = "const café = 1;\nlet x = 2;";
+    let text = UNTERMINATED_FIXTURE;
     let index = LineIndex::new(text);
     for offset in char_boundary_offsets(text) {
         let line_col = index.line_col(offset).unwrap();
