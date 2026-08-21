@@ -249,3 +249,10 @@ fn columns_on_a_later_line_are_converted_against_that_line() {
         Some(WideLineCol { line: 1, col: 2 })
     );
 }
+
+#[test]
+fn line_past_the_end_has_no_wide_position() {
+    let index = LineIndex::new("abc");
+    let line_col = LineCol { line: 5, col: 0 };
+    assert_eq!(index.to_wide(WideEncoding::Utf16, line_col), None);
+}
