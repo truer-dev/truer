@@ -402,13 +402,13 @@ fn blank_line_before_the_end_is_counted() {
 }
 
 #[test]
-fn lone_carriage_return_ends_a_line() {
+fn lone_carriage_return_adds_a_line() {
     let index = LineIndex::new("a\rb");
     assert_eq!(index.line_count(), 2);
 }
 
 #[test]
-fn carriage_return_newline_pair_ends_one_line_not_two() {
+fn carriage_return_newline_pair_adds_one_line() {
     let index = LineIndex::new("a\r\nb");
     assert_eq!(index.line_count(), 2);
 }
