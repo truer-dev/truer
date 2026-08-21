@@ -39,7 +39,7 @@ impl LineIndex {
             .get(line + 1)
             .copied()
             .unwrap_or(self.len + 1);
-        let offset = start + line_col.col;
+        let offset = start.checked_add(line_col.col)?;
         (offset < end_exclusive && !self.splits_a_character(offset)).then_some(offset)
     }
 
