@@ -141,3 +141,9 @@ fn position_round_trips_from_the_offset_it_came_from() {
     let line_col = index.line_col(6).unwrap();
     assert_eq!(index.offset(line_col), Some(6));
 }
+
+#[test]
+fn position_resolving_past_a_carriage_return_newline_pair() {
+    let index = LineIndex::new("a\r\nb");
+    assert_eq!(index.offset(LineCol { line: 1, col: 0 }), Some(3));
+}
