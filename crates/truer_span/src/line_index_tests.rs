@@ -147,3 +147,9 @@ fn position_resolving_past_a_carriage_return_newline_pair() {
     let index = LineIndex::new("a\r\nb");
     assert_eq!(index.offset(LineCol { line: 1, col: 0 }), Some(3));
 }
+
+#[test]
+fn final_empty_line_has_an_offset() {
+    let index = LineIndex::new("a\n");
+    assert_eq!(index.offset(LineCol { line: 1, col: 0 }), Some(2));
+}
