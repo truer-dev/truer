@@ -307,3 +307,10 @@ fn same_wide_column_is_a_position_in_utf32() {
         Some(LineCol { line: 0, col: 4 })
     );
 }
+
+#[test]
+fn wide_position_past_the_end_of_its_line_has_no_narrow_position() {
+    let index = LineIndex::new("abc");
+    let wide = WideLineCol { line: 0, col: 9 };
+    assert_eq!(index.to_narrow(WideEncoding::Utf16, wide), None);
+}
