@@ -420,6 +420,12 @@ fn trailing_lone_carriage_return_does_not_add_a_line() {
 }
 
 #[test]
+fn trailing_carriage_return_newline_pair_does_not_add_a_line() {
+    let index = LineIndex::new("a\r\n");
+    assert_eq!(index.line_count(), 1);
+}
+
+#[test]
 fn narrow_conversion_counts_units_not_bytes() {
     let index = LineIndex::new("€€x");
     assert_eq!(
