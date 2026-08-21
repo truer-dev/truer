@@ -263,3 +263,10 @@ fn column_past_the_end_of_its_line_has_no_wide_position() {
     let line_col = LineCol { line: 0, col: 9 };
     assert_eq!(index.to_wide(WideEncoding::Utf16, line_col), None);
 }
+
+#[test]
+fn column_inside_a_character_has_no_wide_position() {
+    let index = LineIndex::new("café");
+    let line_col = LineCol { line: 0, col: 4 };
+    assert_eq!(index.to_wide(WideEncoding::Utf16, line_col), None);
+}
