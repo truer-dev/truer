@@ -408,6 +408,12 @@ fn lone_carriage_return_ends_a_line() {
 }
 
 #[test]
+fn carriage_return_newline_pair_ends_one_line_not_two() {
+    let index = LineIndex::new("a\r\nb");
+    assert_eq!(index.line_count(), 2);
+}
+
+#[test]
 fn narrow_conversion_counts_units_not_bytes() {
     let index = LineIndex::new("€€x");
     assert_eq!(
