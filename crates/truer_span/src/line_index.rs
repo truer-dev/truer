@@ -1,3 +1,5 @@
+use crate::Span;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct LineCol {
     pub line: u32,
@@ -19,14 +21,18 @@ pub enum WideEncoding {
 #[derive(Debug)]
 pub struct LineIndex {
     line_starts: Box<[u32]>,
+    crlf_lines: Box<[u32]>,
     non_ascii_chars: Box<[(u32, u32)]>,
     len: u32,
 }
 
 impl LineIndex {
     pub fn new(text: &str) -> Self {
+        let line_starts = line_starts_of(text);
+        let crlf_lines = crlf_lines_of(text, &line_starts);
         Self {
-            line_starts: line_starts_of(text),
+            line_starts,
+            crlf_lines,
             non_ascii_chars: non_ascii_chars_of(text),
             len: text.len() as u32,
         }
@@ -84,6 +90,22 @@ impl LineIndex {
         })
     }
 
+    pub fn line_span(&self, line: u32) -> Option<Span> {
+        let start = *self.line_starts.get(line as usize)?;
+        let end = match self.line_starts.get(line as usize + 1) {
+            Some(&next_start) => next_start - self.terminator_width(line),
+            None => self.len,
+        };
+        Some(Span::new(start, end))
+    }
+
+    fn terminator_width(&self, line: u32) -> u32 {
+        match self.crlf_lines.binary_search(&line) {
+            Ok(_) => 2,
+            Err(_) => 1,
+        }
+    }
+
     fn narrow_column(&self, encoding: WideEncoding, line_start: u32, wide_col: u32) -> u32 {
         let mut reduction = 0;
         for &(start, len) in self.non_ascii_chars_from(line_start) {
@@ -138,6 +160,22 @@ fn line_starts_of(text: &str) -> Box<[u32]> {
 
 fn ends_a_line(bytes: &[u8], i: usize, byte: u8) -> bool {
     byte == b'\n' || (byte == b'\r' && bytes.get(i + 1) != Some(&b'\n'))
+}
+
+fn crlf_lines_of(text: &str, line_starts: &[u32]) -> Box<[u32]> {
+    let bytes = text.as_bytes();
+    line_starts
+        .iter()
+        .enumerate()
+        .skip(1)
+        .filter(|&(_, &start)| ends_with_a_pair(bytes, start))
+        .map(|(i, _)| i as u32 - 1)
+        .collect()
+}
+
+fn ends_with_a_pair(bytes: &[u8], line_start: u32) -> bool {
+    let i = line_start as usize;
+    i >= 2 && bytes[i - 1] == b'\n' && bytes[i - 2] == b'\r'
 }
 
 fn non_ascii_chars_of(text: &str) -> Box<[(u32, u32)]> {
