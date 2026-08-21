@@ -336,6 +336,12 @@ fn line_span_excludes_its_newline() {
 }
 
 #[test]
+fn line_span_excludes_a_carriage_return_newline_pair() {
+    let index = LineIndex::new("ab\r\ncd");
+    assert_eq!(index.line_span(0), Some(Span::new(0, 2)));
+}
+
+#[test]
 fn narrow_conversion_counts_units_not_bytes() {
     let index = LineIndex::new("€€x");
     assert_eq!(
