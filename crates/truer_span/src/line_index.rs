@@ -100,10 +100,9 @@ impl LineIndex {
     }
 
     fn terminator_width(&self, line: u32) -> u32 {
-        if self.crlf_lines.binary_search(&line).is_ok() {
-            2
-        } else {
-            1
+        match self.crlf_lines.binary_search(&line) {
+            Ok(_) => 2,
+            Err(_) => 1,
         }
     }
 
