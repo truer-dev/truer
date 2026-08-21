@@ -372,6 +372,12 @@ fn line_span_counts_bytes_not_characters() {
 }
 
 #[test]
+fn a_line_past_the_end_has_no_span() {
+    let index = LineIndex::new("abc");
+    assert_eq!(index.line_span(1), None);
+}
+
+#[test]
 fn narrow_conversion_counts_units_not_bytes() {
     let index = LineIndex::new("€€x");
     assert_eq!(
