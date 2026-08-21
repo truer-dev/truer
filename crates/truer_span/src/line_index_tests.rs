@@ -209,3 +209,13 @@ fn two_byte_character_shortens_the_utf16_column() {
         Some(WideLineCol { line: 0, col: 5 })
     );
 }
+
+#[test]
+fn three_byte_character_shortens_the_utf16_column_further() {
+    let index = LineIndex::new("€ x");
+    let line_col = LineCol { line: 0, col: 4 };
+    assert_eq!(
+        index.to_wide(WideEncoding::Utf16, line_col),
+        Some(WideLineCol { line: 0, col: 2 })
+    );
+}
