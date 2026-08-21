@@ -63,7 +63,7 @@ impl LineIndex {
                     .non_ascii_chars
                     .iter()
                     .filter(|&&(start, _)| (line_start..offset).contains(&start))
-                    .map(|&(_, len)| len - 1)
+                    .map(|&(_, len)| len - if len == 4 { 2 } else { 1 })
                     .sum();
                 Some(WideLineCol {
                     line: line_col.line,
