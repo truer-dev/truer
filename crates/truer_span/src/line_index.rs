@@ -85,20 +85,16 @@ impl LineIndex {
     }
 
     fn narrow_column(&self, encoding: WideEncoding, line_start: u32, wide_col: u32) -> u32 {
-        let units = units_for(encoding);
         let mut col = 0;
         let mut remaining = wide_col;
-        for &(start, len) in self.non_ascii_chars.iter() {
-            if start < line_start {
-                continue;
-            }
+        for &(start, len) in self.non_ascii_chars_from(line_start) {
             let ascii_before = start - line_start - col;
             if ascii_before >= remaining {
                 break;
             }
             remaining -= ascii_before;
             col += ascii_before;
-            let wide_len = units(len);
+            let wide_len = units_for(encoding, len);
             if wide_len > remaining {
                 break;
             }
@@ -109,12 +105,17 @@ impl LineIndex {
     }
 
     fn wide_reduction(&self, encoding: WideEncoding, line_start: u32, offset: u32) -> u32 {
-        let units = units_for(encoding);
-        self.non_ascii_chars
-            .iter()
-            .filter(|&&(start, _)| (line_start..offset).contains(&start))
-            .map(|&(_, len)| len - units(len))
+        self.non_ascii_chars_from(line_start)
+            .take_while(|&&(start, _)| start < offset)
+            .map(|&(_, len)| len - units_for(encoding, len))
             .sum()
+    }
+
+    fn non_ascii_chars_from(&self, offset: u32) -> std::slice::Iter<'_, (u32, u32)> {
+        let first = self
+            .non_ascii_chars
+            .partition_point(|&(start, _)| start < offset);
+        self.non_ascii_chars[first..].iter()
     }
 
     fn splits_a_character(&self, offset: u32) -> bool {
@@ -155,14 +156,10 @@ fn non_ascii_chars_of(text: &str) -> Box<[(u32, u32)]> {
         .collect()
 }
 
-fn utf16_units(len_utf8: u32) -> u32 {
-    if len_utf8 > 3 { 2 } else { 1 }
-}
-
-fn units_for(encoding: WideEncoding) -> fn(u32) -> u32 {
+fn units_for(encoding: WideEncoding, len_utf8: u32) -> u32 {
     match encoding {
-        WideEncoding::Utf16 => utf16_units,
-        WideEncoding::Utf32 => |_| 1,
+        WideEncoding::Utf16 if len_utf8 > 3 => 2,
+        _ => 1,
     }
 }
 
