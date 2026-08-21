@@ -360,6 +360,12 @@ fn a_final_empty_line_is_an_empty_span() {
 }
 
 #[test]
+fn an_empty_text_has_one_empty_line() {
+    let index = LineIndex::new("");
+    assert_eq!(index.line_span(0), Some(Span::new(0, 0)));
+}
+
+#[test]
 fn narrow_conversion_counts_units_not_bytes() {
     let index = LineIndex::new("€€x");
     assert_eq!(
