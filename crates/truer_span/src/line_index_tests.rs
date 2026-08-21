@@ -480,6 +480,12 @@ fn a_multi_character_grapheme_is_measured_by_its_parts_not_as_one() {
 }
 
 #[test]
+fn a_text_mixing_every_line_break_is_counted_once_per_break() {
+    let index = LineIndex::new("a\nb\r\nc\rd");
+    assert_eq!(index.line_count(), 4);
+}
+
+#[test]
 fn narrow_conversion_counts_units_not_bytes() {
     let index = LineIndex::new("€€x");
     assert_eq!(
