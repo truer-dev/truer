@@ -40,7 +40,7 @@ impl LineIndex {
             .copied()
             .unwrap_or(self.len + 1);
         let offset = start + line_col.col;
-        (offset < end_exclusive).then_some(offset)
+        (offset < end_exclusive && !self.splits_a_character(offset)).then_some(offset)
     }
 
     fn splits_a_character(&self, offset: u32) -> bool {
