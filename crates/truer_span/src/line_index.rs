@@ -31,6 +31,18 @@ impl LineIndex {
         })
     }
 
+    pub fn offset(&self, line_col: LineCol) -> Option<u32> {
+        let line = line_col.line as usize;
+        let start = *self.line_starts.get(line)?;
+        let end_exclusive = self
+            .line_starts
+            .get(line + 1)
+            .copied()
+            .unwrap_or(self.len + 1);
+        let offset = start.checked_add(line_col.col)?;
+        (offset < end_exclusive && !self.splits_a_character(offset)).then_some(offset)
+    }
+
     fn splits_a_character(&self, offset: u32) -> bool {
         match self
             .non_ascii_chars
