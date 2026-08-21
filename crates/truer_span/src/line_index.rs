@@ -32,7 +32,7 @@ impl LineIndex {
     }
 
     pub fn offset(&self, line_col: LineCol) -> Option<u32> {
-        let start = self.line_starts[line_col.line as usize];
+        let start = *self.line_starts.get(line_col.line as usize)?;
         Some(start + line_col.col)
     }
 

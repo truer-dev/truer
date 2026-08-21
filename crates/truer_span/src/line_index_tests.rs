@@ -153,3 +153,9 @@ fn final_empty_line_has_an_offset() {
     let index = LineIndex::new("a\n");
     assert_eq!(index.offset(LineCol { line: 1, col: 0 }), Some(2));
 }
+
+#[test]
+fn line_past_the_end_has_no_offset() {
+    let index = LineIndex::new("abc");
+    assert_eq!(index.offset(LineCol { line: 1, col: 0 }), None);
+}
