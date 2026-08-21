@@ -321,3 +321,12 @@ fn wide_line_past_the_end_has_no_narrow_position() {
     let wide = WideLineCol { line: 1, col: 0 };
     assert_eq!(index.to_narrow(WideEncoding::Utf16, wide), None);
 }
+
+#[test]
+fn narrow_conversion_counts_units_not_bytes() {
+    let index = LineIndex::new("€€x");
+    assert_eq!(
+        index.to_narrow(WideEncoding::Utf16, WideLineCol { line: 0, col: 2 }),
+        Some(LineCol { line: 0, col: 6 })
+    );
+}
