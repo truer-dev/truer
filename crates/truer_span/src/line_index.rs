@@ -13,6 +13,7 @@ pub struct WideLineCol {
 #[derive(Debug)]
 pub enum WideEncoding {
     Utf16,
+    Utf32,
 }
 
 #[derive(Debug)]
@@ -57,20 +58,20 @@ impl LineIndex {
     pub fn to_wide(&self, encoding: WideEncoding, line_col: LineCol) -> Option<WideLineCol> {
         let offset = self.offset(line_col)?;
         let line_start = self.line_starts[line_col.line as usize];
-        match encoding {
-            WideEncoding::Utf16 => {
-                let reduction: u32 = self
-                    .non_ascii_chars
-                    .iter()
-                    .filter(|&&(start, _)| (line_start..offset).contains(&start))
-                    .map(|&(_, len)| len - utf16_units(len))
-                    .sum();
-                Some(WideLineCol {
-                    line: line_col.line,
-                    col: line_col.col - reduction,
-                })
-            }
-        }
+        let units = match encoding {
+            WideEncoding::Utf16 => utf16_units,
+            WideEncoding::Utf32 => |_| 1,
+        };
+        let reduction: u32 = self
+            .non_ascii_chars
+            .iter()
+            .filter(|&&(start, _)| (line_start..offset).contains(&start))
+            .map(|&(_, len)| len - units(len))
+            .sum();
+        Some(WideLineCol {
+            line: line_col.line,
+            col: line_col.col - reduction,
+        })
     }
 
     fn splits_a_character(&self, offset: u32) -> bool {
