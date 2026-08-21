@@ -348,6 +348,12 @@ fn line_span_excludes_a_lone_carriage_return() {
 }
 
 #[test]
+fn the_last_line_ends_at_the_end_of_the_text() {
+    let index = LineIndex::new("ab\ncd");
+    assert_eq!(index.line_span(1), Some(Span::new(3, 5)));
+}
+
+#[test]
 fn narrow_conversion_counts_units_not_bytes() {
     let index = LineIndex::new("€€x");
     assert_eq!(
