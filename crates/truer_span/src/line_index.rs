@@ -92,7 +92,8 @@ impl LineIndex {
 
     pub fn line_count(&self) -> u32 {
         let count = self.line_starts.len() as u32;
-        if self.line_starts.last() == Some(&self.len) {
+        let final_line_is_empty = self.line_starts.last() == Some(&self.len);
+        if final_line_is_empty {
             count - 1
         } else {
             count
