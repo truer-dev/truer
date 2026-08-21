@@ -91,10 +91,11 @@ impl LineIndex {
     }
 
     pub fn line_count(&self) -> u32 {
-        if self.len == 0 {
-            0
+        let count = self.line_starts.len() as u32;
+        if self.line_starts.last() == Some(&self.len) {
+            count - 1
         } else {
-            self.line_starts.len() as u32
+            count
         }
     }
 
