@@ -354,6 +354,12 @@ fn the_last_line_ends_at_the_end_of_the_text() {
 }
 
 #[test]
+fn a_final_empty_line_is_an_empty_span() {
+    let index = LineIndex::new("a\n");
+    assert_eq!(index.line_span(1), Some(Span::new(2, 2)));
+}
+
+#[test]
 fn narrow_conversion_counts_units_not_bytes() {
     let index = LineIndex::new("€€x");
     assert_eq!(
