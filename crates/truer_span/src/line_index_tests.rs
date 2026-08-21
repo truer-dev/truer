@@ -116,3 +116,9 @@ fn first_position_is_first_offset() {
     let index = LineIndex::new("");
     assert_eq!(index.offset(LineCol { line: 0, col: 0 }), Some(0));
 }
+
+#[test]
+fn column_at_the_line_terminator_is_an_offset() {
+    let index = LineIndex::new("a\nb");
+    assert_eq!(index.offset(LineCol { line: 0, col: 1 }), Some(1));
+}
