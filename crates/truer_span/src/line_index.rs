@@ -31,6 +31,10 @@ impl LineIndex {
         })
     }
 
+    pub fn offset(&self, _line_col: LineCol) -> Option<u32> {
+        Some(0)
+    }
+
     fn splits_a_character(&self, offset: u32) -> bool {
         match self
             .non_ascii_chars
