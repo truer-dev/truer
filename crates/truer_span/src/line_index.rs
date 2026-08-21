@@ -92,13 +92,18 @@ impl LineIndex {
 
     pub fn line_span(&self, line: u32) -> Option<Span> {
         let start = *self.line_starts.get(line as usize)?;
-        let next_start = self.line_starts[line as usize + 1];
-        let terminator_width = if self.crlf_lines.binary_search(&line).is_ok() {
-            2
-        } else {
-            1
+        let end = match self.line_starts.get(line as usize + 1) {
+            Some(&next_start) => {
+                let terminator_width = if self.crlf_lines.binary_search(&line).is_ok() {
+                    2
+                } else {
+                    1
+                };
+                next_start - terminator_width
+            }
+            None => self.len,
         };
-        Some(Span::new(start, next_start - terminator_width))
+        Some(Span::new(start, end))
     }
 
     fn narrow_column(&self, encoding: WideEncoding, line_start: u32, wide_col: u32) -> u32 {
