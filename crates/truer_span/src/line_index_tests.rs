@@ -476,11 +476,11 @@ fn position_never_decreases_as_offset_increases() {
 
 #[test]
 fn multi_character_grapheme_is_measured_by_its_parts_not_as_one() {
-    let index = LineIndex::new("// 👨‍👩‍👧‍👦\nlet a = 1;\n");
-    assert_eq!(index.offset(LineCol { line: 1, col: 0 }), Some(29));
+    let index = LineIndex::new("👨‍👩‍👧‍👦\nlet a = 1;\n");
+    assert_eq!(index.offset(LineCol { line: 1, col: 0 }), Some(26));
     assert_eq!(
-        index.to_wide(WideEncoding::Utf16, LineCol { line: 0, col: 28 }),
-        Some(WideLineCol { line: 0, col: 14 })
+        index.to_wide(WideEncoding::Utf16, LineCol { line: 0, col: 25 }),
+        Some(WideLineCol { line: 0, col: 11 })
     );
 }
 
