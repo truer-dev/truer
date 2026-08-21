@@ -42,10 +42,10 @@ impl LineIndex {
         if offset > self.len || self.splits_a_character(offset) {
             return None;
         }
-        let line = self.line_starts.partition_point(|&start| start <= offset) - 1;
+        let line = line_of(&self.line_starts, offset);
         Some(LineCol {
-            line: line as u32,
-            col: offset - self.line_starts[line],
+            line,
+            col: offset - self.line_starts[line as usize],
         })
     }
 
@@ -157,13 +157,17 @@ fn ends_a_line(bytes: &[u8], i: usize, byte: u8) -> bool {
     byte == b'\n' || (byte == b'\r' && bytes.get(i + 1) != Some(&b'\n'))
 }
 
+fn line_of(line_starts: &[u32], offset: u32) -> u32 {
+    line_starts.partition_point(|&start| start <= offset) as u32 - 1
+}
+
 fn crlf_lines_of(text: &str, line_starts: &[u32]) -> Box<[u32]> {
     let bytes = text.as_bytes();
     bytes
         .iter()
         .enumerate()
         .filter(|&(i, &byte)| byte == b'\r' && bytes.get(i + 1) == Some(&b'\n'))
-        .map(|(i, _)| line_starts.partition_point(|&start| start <= i as u32) as u32 - 1)
+        .map(|(i, _)| line_of(line_starts, i as u32))
         .collect()
 }
 
