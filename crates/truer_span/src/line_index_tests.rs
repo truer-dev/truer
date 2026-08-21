@@ -1,4 +1,4 @@
-use super::{LineCol, LineIndex};
+use super::{LineCol, LineIndex, WideEncoding, WideLineCol};
 
 #[test]
 fn line_col_of_empty_text_is_origin() {
@@ -187,5 +187,15 @@ fn column_that_overflows_the_offset_has_no_offset() {
             col: u32::MAX
         }),
         None
+    );
+}
+
+#[test]
+fn ascii_position_is_unchanged_in_utf16() {
+    let index = LineIndex::new("abc");
+    let line_col = LineCol { line: 0, col: 2 };
+    assert_eq!(
+        index.to_wide(WideEncoding::Utf16, line_col),
+        Some(WideLineCol { line: 0, col: 2 })
     );
 }
