@@ -73,9 +73,7 @@ impl LineIndex {
             .get(line + 1)
             .copied()
             .unwrap_or(self.len + 1);
-        let reduction =
-            self.wide_reduction(encoding, line_start, line_start.saturating_add(wide.col));
-        let col = wide.col + reduction;
+        let col = self.narrow_column(encoding, line_start, wide.col);
         let offset = line_start.checked_add(col)?;
         if offset >= end_exclusive || self.splits_a_character(offset) {
             return None;
@@ -84,6 +82,30 @@ impl LineIndex {
             line: wide.line,
             col,
         })
+    }
+
+    fn narrow_column(&self, encoding: WideEncoding, line_start: u32, wide_col: u32) -> u32 {
+        let units = units_for(encoding);
+        let mut col = 0;
+        let mut remaining = wide_col;
+        for &(start, len) in self.non_ascii_chars.iter() {
+            if start < line_start {
+                continue;
+            }
+            let ascii_before = start - line_start - col;
+            if ascii_before >= remaining {
+                break;
+            }
+            remaining -= ascii_before;
+            col += ascii_before;
+            let wide_len = units(len);
+            if wide_len > remaining {
+                break;
+            }
+            remaining -= wide_len;
+            col += len;
+        }
+        col + remaining
     }
 
     fn wide_reduction(&self, encoding: WideEncoding, line_start: u32, offset: u32) -> u32 {
