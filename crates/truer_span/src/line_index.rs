@@ -63,7 +63,7 @@ impl LineIndex {
                     .non_ascii_chars
                     .iter()
                     .filter(|&&(start, _)| (line_start..offset).contains(&start))
-                    .map(|&(_, len)| len - if len == 4 { 2 } else { 1 })
+                    .map(|&(_, len)| len - utf16_units(len))
                     .sum();
                 Some(WideLineCol {
                     line: line_col.line,
@@ -109,6 +109,10 @@ fn non_ascii_chars_of(text: &str) -> Box<[(u32, u32)]> {
         .filter(|&(_, ch)| !ch.is_ascii())
         .map(|(i, ch)| (i as u32, ch.len_utf8() as u32))
         .collect()
+}
+
+fn utf16_units(len_utf8: u32) -> u32 {
+    if len_utf8 > 3 { 2 } else { 1 }
 }
 
 #[cfg(test)]
