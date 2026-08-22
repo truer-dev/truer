@@ -55,6 +55,7 @@ impl LineIndex {
         })
     }
 
+    #[doc = include_str!("../docs/line_index/offset.md")]
     pub fn offset(&self, line_col: LineCol) -> Option<u32> {
         let line = line_col.line as usize;
         let start = *self.line_starts.get(line)?;
