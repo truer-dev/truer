@@ -14,6 +14,7 @@ pub struct WideLineCol {
     pub col: u32,
 }
 
+#[doc = include_str!("../docs/line_index/wide_encoding.md")]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum WideEncoding {
     Utf16,
