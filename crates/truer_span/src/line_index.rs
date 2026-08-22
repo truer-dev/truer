@@ -43,6 +43,7 @@ impl LineIndex {
         }
     }
 
+    #[doc = include_str!("../docs/line_index/line_col.md")]
     pub fn line_col(&self, offset: u32) -> Option<LineCol> {
         if offset > self.len || self.splits_a_character(offset) {
             return None;
