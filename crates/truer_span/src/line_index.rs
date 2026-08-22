@@ -7,6 +7,7 @@ pub struct LineCol {
     pub col: u32,
 }
 
+#[doc = include_str!("../docs/line_index/wide_line_col.md")]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct WideLineCol {
     pub line: u32,
