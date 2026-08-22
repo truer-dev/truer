@@ -216,6 +216,8 @@ fn units_for(encoding: WideEncoding, len_utf8: u32) -> u32 {
 #[cfg(test)]
 mod line_col_tests;
 #[cfg(test)]
+mod line_count_tests;
+#[cfg(test)]
 mod line_span_tests;
 #[cfg(test)]
 mod offset_tests;
