@@ -1,3 +1,4 @@
+#[doc = include_str!("../docs/span/span.md")]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Span {
     start: u32,
@@ -5,23 +6,28 @@ pub struct Span {
 }
 
 impl Span {
+    #[doc = include_str!("../docs/span/new.md")]
     pub const fn new(start: u32, end: u32) -> Self {
         debug_assert!(start <= end);
         Self { start, end }
     }
 
+    #[doc = include_str!("../docs/span/empty.md")]
     pub const fn empty(at: u32) -> Self {
         Self { start: at, end: at }
     }
 
+    #[doc = include_str!("../docs/span/start.md")]
     pub const fn start(&self) -> u32 {
         self.start
     }
 
+    #[doc = include_str!("../docs/span/end.md")]
     pub const fn end(&self) -> u32 {
         self.end
     }
 
+    #[doc = include_str!("../docs/span/is_empty.md")]
     pub const fn is_empty(&self) -> bool {
         self.start == self.end
     }
