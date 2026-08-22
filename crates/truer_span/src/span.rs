@@ -22,6 +22,7 @@ impl Span {
         self.start
     }
 
+    #[doc = include_str!("../docs/span/end.md")]
     pub const fn end(&self) -> u32 {
         self.end
     }
