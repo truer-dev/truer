@@ -18,6 +18,7 @@ pub enum WideEncoding {
     Utf32,
 }
 
+#[doc = include_str!("../docs/line_index/line_index.md")]
 #[derive(Debug)]
 pub struct LineIndex {
     line_starts: Box<[u32]>,
