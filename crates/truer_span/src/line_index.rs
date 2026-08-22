@@ -68,6 +68,7 @@ impl LineIndex {
         (offset < end_exclusive && !self.splits_a_character(offset)).then_some(offset)
     }
 
+    #[doc = include_str!("../docs/line_index/to_wide.md")]
     pub fn to_wide(&self, encoding: WideEncoding, line_col: LineCol) -> Option<WideLineCol> {
         let offset = self.offset(line_col)?;
         let line_start = self.line_starts[line_col.line as usize];
