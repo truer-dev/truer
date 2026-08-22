@@ -1,23 +1,27 @@
 use crate::Span;
 
+#[doc = include_str!("../docs/line_index/line_col_type.md")]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct LineCol {
     pub line: u32,
     pub col: u32,
 }
 
+#[doc = include_str!("../docs/line_index/wide_line_col.md")]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct WideLineCol {
     pub line: u32,
     pub col: u32,
 }
 
+#[doc = include_str!("../docs/line_index/wide_encoding.md")]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum WideEncoding {
     Utf16,
     Utf32,
 }
 
+#[doc = include_str!("../docs/line_index/line_index.md")]
 #[derive(Debug)]
 pub struct LineIndex {
     line_starts: Box<[u32]>,
@@ -27,6 +31,7 @@ pub struct LineIndex {
 }
 
 impl LineIndex {
+    #[doc = include_str!("../docs/line_index/new.md")]
     pub fn new(text: &str) -> Self {
         let line_starts = line_starts_of(text);
         let crlf_lines = crlf_lines_of(text, &line_starts);
@@ -38,6 +43,7 @@ impl LineIndex {
         }
     }
 
+    #[doc = include_str!("../docs/line_index/line_col.md")]
     pub fn line_col(&self, offset: u32) -> Option<LineCol> {
         if offset > self.len || self.splits_a_character(offset) {
             return None;
@@ -49,6 +55,7 @@ impl LineIndex {
         })
     }
 
+    #[doc = include_str!("../docs/line_index/offset.md")]
     pub fn offset(&self, line_col: LineCol) -> Option<u32> {
         let line = line_col.line as usize;
         let start = *self.line_starts.get(line)?;
@@ -61,6 +68,7 @@ impl LineIndex {
         (offset < end_exclusive && !self.splits_a_character(offset)).then_some(offset)
     }
 
+    #[doc = include_str!("../docs/line_index/to_wide.md")]
     pub fn to_wide(&self, encoding: WideEncoding, line_col: LineCol) -> Option<WideLineCol> {
         let offset = self.offset(line_col)?;
         let line_start = self.line_starts[line_col.line as usize];
@@ -71,6 +79,7 @@ impl LineIndex {
         })
     }
 
+    #[doc = include_str!("../docs/line_index/to_narrow.md")]
     pub fn to_narrow(&self, encoding: WideEncoding, wide: WideLineCol) -> Option<LineCol> {
         let line = wide.line as usize;
         let line_start = *self.line_starts.get(line)?;
@@ -90,6 +99,7 @@ impl LineIndex {
         })
     }
 
+    #[doc = include_str!("../docs/line_index/line_count.md")]
     pub fn line_count(&self) -> u32 {
         let count = self.line_starts.len() as u32;
         let final_line_is_empty = self.line_starts.last() == Some(&self.len);
@@ -100,6 +110,7 @@ impl LineIndex {
         }
     }
 
+    #[doc = include_str!("../docs/line_index/line_span.md")]
     pub fn line_span(&self, line: u32) -> Option<Span> {
         let start = *self.line_starts.get(line as usize)?;
         let end = match self.line_starts.get(line as usize + 1) {
