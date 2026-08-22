@@ -214,6 +214,8 @@ fn units_for(encoding: WideEncoding, len_utf8: u32) -> u32 {
 }
 
 #[cfg(test)]
+mod invariants_tests;
+#[cfg(test)]
 mod line_col_tests;
 #[cfg(test)]
 mod line_count_tests;
@@ -221,8 +223,5 @@ mod line_count_tests;
 mod line_span_tests;
 #[cfg(test)]
 mod offset_tests;
-#[cfg(test)]
-#[path = "line_index_tests.rs"]
-mod tests;
 #[cfg(test)]
 mod wide_tests;
