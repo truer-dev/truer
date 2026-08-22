@@ -10,6 +10,4 @@ assert_eq!((name.start(), name.end()), (6, 11));
 
 # Panics
 
-In debug builds, when `start` is greater than `end`. The check is a `debug_assert!` rather
-than an `assert!` because it runs once per token: worth its cost while the code that produces
-spans is being written, not in every release build afterwards.
+In debug builds, when `start` is greater than `end`. The check is a `debug_assert!` rather than an `assert!` because it runs once per token: worth its cost while the code that produces spans is being written, not in every release build afterwards.

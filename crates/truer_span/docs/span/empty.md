@@ -1,9 +1,6 @@
 Creates the empty span at one offset.
 
-An offset is a caret position between characters, not the index of one, so this names a place
-rather than a region: where a token was expected and none was written, or where an edit would
-be inserted. The caret after the last character is such a place, so an empty span at the
-length of the text is a position and not an overrun.
+An offset is a caret position between characters, not the index of one, so this names a place rather than a region: where a token was expected and none was written, or where an edit would be inserted. The caret after the last character is such a place, so an empty span at the length of the text is a position and not an overrun.
 
 ```rust
 use truer_span::Span;

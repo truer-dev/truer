@@ -1,5 +1,4 @@
-Returns the byte offset the span ends before. Spans are half-open, so this is one past the last byte
-covered and the text from it onwards is what follows the span.
+Returns the byte offset the span ends before. Spans are half-open, so this is one past the last byte covered and the text from it onwards is what follows the span.
 
 ```rust
 use truer_span::Span;

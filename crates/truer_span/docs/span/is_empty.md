@@ -1,7 +1,6 @@
 Returns `true` when the span covers no bytes.
 
-An empty span is a position rather than a region, so a renderer has nothing to underline and
-draws a caret between two characters instead.
+An empty span is a position rather than a region, so a renderer has nothing to underline and draws a caret between two characters instead.
 
 ```rust
 use truer_span::Span;
