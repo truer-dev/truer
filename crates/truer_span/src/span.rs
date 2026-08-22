@@ -12,6 +12,7 @@ impl Span {
         Self { start, end }
     }
 
+    #[doc = include_str!("../docs/span/empty.md")]
     pub const fn empty(at: u32) -> Self {
         Self { start: at, end: at }
     }
