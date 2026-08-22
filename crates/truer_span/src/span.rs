@@ -1,3 +1,4 @@
+#[doc = include_str!("../docs/span/span.md")]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Span {
     start: u32,
