@@ -1,4 +1,4 @@
-The span between two byte offsets.
+Creates a span between two byte offsets.
 
 ```rust
 use truer_span::Span;

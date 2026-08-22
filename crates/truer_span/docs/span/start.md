@@ -1,4 +1,4 @@
-The byte offset the span begins at, and the first byte it covers.
+Returns the byte offset the span begins at, which is the first byte it covers.
 
 ```rust
 use truer_span::Span;
