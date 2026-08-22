@@ -1,6 +1,6 @@
 Converts a wide column back into a byte column, the inverse of [`LineIndex::to_wide`] under the same [`WideEncoding`].
 
-`None` where a byte column would be `None`, and in one case of its own: a wide column falling between the two UTF-16 units of a character outside the Basic Multilingual Plane. An editor can send such a column; snapping it to a boundary is a policy, and the caller owns it.
+It is `None` where a byte column would be `None`, and in one case of its own: a wide column falling between the two UTF-16 units of a character outside the Basic Multilingual Plane. An editor can send such a column; snapping it to a boundary is a policy, and the caller owns it.
 
 ```rust
 use truer_span::{LineCol, LineIndex, WideEncoding, WideLineCol};

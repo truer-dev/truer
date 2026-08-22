@@ -19,6 +19,7 @@ assert_eq!(
     Some(WideLineCol { line: 1, col: 5 }),
 );
 
+// Column 10 falls between the two bytes of `é`, so it names no position at all.
 assert_eq!(
     index.to_wide(WideEncoding::Utf16, LineCol { line: 0, col: 10 }),
     None,

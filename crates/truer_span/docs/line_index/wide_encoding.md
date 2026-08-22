@@ -1,6 +1,6 @@
 Which unit a wide column counts. Both exist because the Language Server Protocol negotiates a position encoding: UTF-16 is the one it defaults to, and UTF-32 is on offer. There is no UTF-8 variant — that column is a plain [`LineCol`].
 
-The two part above the Basic Multilingual Plane, where a character is a UTF-16 surrogate pair but still one code point.
+The two part ways above the Basic Multilingual Plane, where a character is a UTF-16 surrogate pair but still one code point.
 
 ```rust
 use truer_span::{LineCol, LineIndex, WideEncoding, WideLineCol};
