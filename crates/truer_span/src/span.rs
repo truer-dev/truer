@@ -27,6 +27,7 @@ impl Span {
         self.end
     }
 
+    #[doc = include_str!("../docs/span/is_empty.md")]
     pub const fn is_empty(&self) -> bool {
         self.start == self.end
     }
