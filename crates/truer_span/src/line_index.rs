@@ -1,5 +1,6 @@
 use crate::Span;
 
+#[doc = include_str!("../docs/line_index/line_col_type.md")]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct LineCol {
     pub line: u32,
