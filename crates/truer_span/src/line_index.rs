@@ -31,6 +31,7 @@ pub struct LineIndex {
 }
 
 impl LineIndex {
+    #[doc = include_str!("../docs/line_index/new.md")]
     pub fn new(text: &str) -> Self {
         let line_starts = line_starts_of(text);
         let crlf_lines = crlf_lines_of(text, &line_starts);
