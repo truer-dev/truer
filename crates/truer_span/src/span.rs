@@ -6,6 +6,7 @@ pub struct Span {
 }
 
 impl Span {
+    #[doc = include_str!("../docs/span/new.md")]
     pub const fn new(start: u32, end: u32) -> Self {
         debug_assert!(start <= end);
         Self { start, end }
