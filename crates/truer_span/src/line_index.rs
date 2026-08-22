@@ -99,6 +99,7 @@ impl LineIndex {
         })
     }
 
+    #[doc = include_str!("../docs/line_index/line_count.md")]
     pub fn line_count(&self) -> u32 {
         let count = self.line_starts.len() as u32;
         let final_line_is_empty = self.line_starts.last() == Some(&self.len);
