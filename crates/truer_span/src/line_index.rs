@@ -79,6 +79,7 @@ impl LineIndex {
         })
     }
 
+    #[doc = include_str!("../docs/line_index/to_narrow.md")]
     pub fn to_narrow(&self, encoding: WideEncoding, wide: WideLineCol) -> Option<LineCol> {
         let line = wide.line as usize;
         let line_start = *self.line_starts.get(line)?;
