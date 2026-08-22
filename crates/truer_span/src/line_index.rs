@@ -220,3 +220,5 @@ mod offset_tests;
 #[cfg(test)]
 #[path = "line_index_tests.rs"]
 mod tests;
+#[cfg(test)]
+mod wide_tests;
